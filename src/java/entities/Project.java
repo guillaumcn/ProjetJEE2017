@@ -75,6 +75,19 @@ public class Project implements Serializable {
         this.idproject = idproject;
         this.code = code;
     }
+    
+    public Project(Integer idproject, String code, String desc) {
+        this.idproject = idproject;
+        this.code = code;
+        this.description = desc;
+    }
+    
+    public Project(Integer idproject, String code, String desc, String start) {
+        this.idproject = idproject;
+        this.code = code;
+        this.description = desc;
+        this.startdate = new Date(start);
+    }
 
     public Integer getIdproject() {
         return idproject;
