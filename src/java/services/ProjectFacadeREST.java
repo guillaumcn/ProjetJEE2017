@@ -93,6 +93,7 @@ public class ProjectFacadeREST {
             tx.commit();
             return "OK";
         } catch(Exception e) {
+            System.out.println(e.getMessage());
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -137,48 +138,41 @@ public class ProjectFacadeREST {
     /*public ProjectFacadeREST() {
         super(Project.class);
     }
-
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Project entity) {
         super.create(entity);
     }
-
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Project entity) {
         super.edit(entity);
     }
-
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Integer id) {
         super.remove(super.find(id));
     }
-
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Project find(@PathParam("id") Integer id) {
         return super.find(id);
     }
-
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Project> findAll() {
         return super.findAll();
     }
-
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Project> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
-
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)

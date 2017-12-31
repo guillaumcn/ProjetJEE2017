@@ -51,7 +51,7 @@ public class Task implements Serializable {
     private Collection<ProjectTeam> projectTeamCollection;
     @JoinColumn(name = "idproject", referencedColumnName = "idproject")
     @ManyToOne(optional = false)
-    private Project idproject;
+    private Integer idproject;
     @JoinColumn(name = "status", referencedColumnName = "code_status")
     @ManyToOne(optional = false)
     private Status status;
@@ -61,6 +61,12 @@ public class Task implements Serializable {
 
     public Task(Integer idtask) {
         this.idtask = idtask;
+    }
+    
+    public Task(Integer idtask, Integer idproject, String description) {
+        this.idtask = idtask;
+        this.idproject = idproject;
+        this.description = description;
     }
 
     public Integer getIdtask() {
@@ -97,11 +103,11 @@ public class Task implements Serializable {
         this.projectTeamCollection = projectTeamCollection;
     }
 
-    public Project getIdproject() {
+    public Integer getIdproject() {
         return idproject;
     }
 
-    public void setIdproject(Project idproject) {
+    public void setIdproject(Integer idproject) {
         this.idproject = idproject;
     }
 
