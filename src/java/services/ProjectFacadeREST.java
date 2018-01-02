@@ -114,6 +114,7 @@ public class ProjectFacadeREST {
     }
     
     // Met a jour le projet
+    // A modifier
     @GET
     @Path("{id}/update") 
     public Project updateProject(@PathParam("id") Integer id, @QueryParam("code") String code) {
