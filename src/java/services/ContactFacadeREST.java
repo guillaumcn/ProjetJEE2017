@@ -34,10 +34,11 @@ public class ContactFacadeREST {
 
     @GET
     @Path("create")
-    public Integer create(@QueryParam("login") String login, @QueryParam("password") String password) {
+    public Integer create(@QueryParam("login") String login, @QueryParam("password") String password, @QueryParam("status") String status) {
+        // Status : Client, Team ou Admin
         // Si on met 1 l'id va s'autoincrement
         try {
-            Contact c = new Contact(1, login, password);
+            Contact c = new Contact(1, login, password, status);
             tx.begin();
             em.persist(c);
             tx.commit();

@@ -70,11 +70,28 @@ public class Contact implements Serializable {
         this.idcontact = idcontact;
     }
 
-    public Contact(Integer idcontact, String login, String password) {
+    public Contact(Integer idcontact, String login, String password, String status) {
         this.idcontact = idcontact;
         this.login = login;
         this.password = password;
+        this.isAdmin = false;
+        this.isClient = false;
+        this.isTeam = false;
+        switch(status) {
+            case "client" :
+                this.isClient = true;
+                break;
+            case "admin" :
+                this.isAdmin = true;
+                break;
+            case "team" :
+                this.isTeam = true;
+                break;
+            default : 
+                System.err.println("status invalide");
+        }
     }
+   
 
     public Integer getIdcontact() {
         return idcontact;
