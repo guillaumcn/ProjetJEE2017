@@ -31,7 +31,7 @@ public class ProjectManagerPK implements Serializable {
         this.idproject = idproject;
         this.idmanager = idmanager;
     }
-
+    
     public int getIdproject() {
         return idproject;
     }
@@ -47,7 +47,7 @@ public class ProjectManagerPK implements Serializable {
     public void setIdmanager(int idmanager) {
         this.idmanager = idmanager;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 0;

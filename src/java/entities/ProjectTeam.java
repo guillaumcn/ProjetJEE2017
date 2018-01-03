@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -72,6 +73,15 @@ public class ProjectTeam implements Serializable {
     public ProjectTeam(Integer id, Date datestart) {
         this.id = id;
         this.datestart = datestart;
+    }
+    
+    // attention à l'idProject qui est de type Project et à l'idmember qui est de type Contact -- et non Integer
+    // à traiter avec l'entityManager et les query pour récupérer les objets
+    public ProjectTeam(Integer id, Project idProject, Contact idContact){
+        this.id = id;
+        this.idproject = idProject;
+        this.idmember = idContact;
+        this.datestart = new Date();
     }
 
     public Date getDatestart() {

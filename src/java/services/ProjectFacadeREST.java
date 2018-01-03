@@ -25,6 +25,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import entities.Contact;
+import entities.ProjectManager;
+import entities.ProjectClient;
+import entities.ProjectTeam;
+import java.util.Date;
 
 /**
  *
@@ -136,6 +141,59 @@ public class ProjectFacadeREST {
         Query q = em.createQuery("select p from Project p");
         return q.getResultList();
     }
+    
+    @GET 
+    @Path("{id}/addContact")
+    @Produces({MediaType.APPLICATION_JSON})
+    // retourne 1 si OK sinon 0
+    public Integer addContact(@PathParam("id") Integer id, @QueryParam("idContact") Integer idContact){
+        // on part du principe qu'il ne peut être QUE admin, client ou team
+        try {
+            // récupération du projet en param
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", id);
+            Project p = (Project) q.getSingleResult();
+            
+            // récupération du type de contact depuis son id en param
+            Query q2 = em.createQuery("select c from Contact c where c.idcontact=:idContact");
+            q2.setParameter("idContact", idContact);
+            Contact res = (Contact) q2.getSingleResult();
+            
+            // création d'un objet en fonction du type de contact récupéré au dessus
+            
+            // création d'un objet project_manager
+            if(res.getIsAdmin()){
+                ProjectManager pm = new ProjectManager(p.getIdproject(), res.getIdcontact());
+                return 1;
+            }
+            
+            // création d'un objet project_client
+            else if(res.getIsClient()){
+                ProjectClient pc = new ProjectClient(p.getIdproject(), res.getIdcontact());
+                return 1;
+            }
+            
+            // création d'un objet project_team
+            else if(res.getIsTeam()){
+                ProjectTeam pt = new ProjectTeam(1, p, res);
+                return 1;
+            }
+            
+            // si erreur, on renvoie 0
+            else {
+                return 0;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("id project : " + id);
+            System.out.println("id contact : " + idContact);
+            // url testé : http://localhost:8080/ProjetJEE/webresources/project/1/addContact?idContact=1
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+
+    
     /*public ProjectFacadeREST() {
         super(Project.class);
     }
