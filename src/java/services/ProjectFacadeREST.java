@@ -43,8 +43,9 @@ public class ProjectFacadeREST {
     EntityTransaction tx = em.getTransaction();
     
     // Creation d'un projet
-    @GET
+    @PUT
     @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Integer create(@QueryParam("code") String code) {
         try {
             Project p = new Project(1, code);
@@ -53,12 +54,13 @@ public class ProjectFacadeREST {
             tx.commit();
             return p.getIdproject();
         } catch(Exception e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
     
     // Creation d'un projet avec description
-    @GET
+    @PUT
     @Path("createWithDesc")
     public Integer create(@QueryParam("code") String code, @QueryParam("description") String desc) {
         try {
@@ -72,7 +74,7 @@ public class ProjectFacadeREST {
         }
     }
     
-    @GET
+    @PUT
     @Path("createWithDescStartDate")
     public Integer create(@QueryParam("code") String code, @QueryParam("description") String desc, @QueryParam("startDate") String start) {
         try {
@@ -87,7 +89,7 @@ public class ProjectFacadeREST {
     }
     
     // Supprime un projet et retourne son id
-    @GET
+    @DELETE
     @Path("{id}/delete")
     public String delete(@PathParam("id") Integer id) {
         try {
@@ -120,7 +122,7 @@ public class ProjectFacadeREST {
     
     // Met a jour le projet
     // A modifier
-    @GET
+    @POST
     @Path("{id}/update") 
     public Project updateProject(@PathParam("id") Integer id, @QueryParam("code") String code) {
         try {
@@ -142,7 +144,7 @@ public class ProjectFacadeREST {
         return q.getResultList();
     }
     
-    @GET 
+    @PUT 
     @Path("{id}/addContact")
     @Produces({MediaType.APPLICATION_JSON})
     // retourne 1 si OK sinon 0
