@@ -75,6 +75,13 @@ public class Release implements Serializable {
         this.idrelease = idrelease;
         this.version = version;
     }
+    
+    public Release(Integer idrelease, Project idproject, String daterelease, String version) {
+        this.idrelease = idrelease;
+        this.idproject = idproject;
+        this.daterelease = new Date(daterelease);
+        this.version = version;
+    }
 
     public Integer getIdrelease() {
         return idrelease;
