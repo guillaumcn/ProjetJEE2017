@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,6 +41,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Release.findByDaterelease", query = "SELECT r FROM Release r WHERE r.daterelease = :daterelease")
     , @NamedQuery(name = "Release.findByVersion", query = "SELECT r FROM Release r WHERE r.version = :version")})
 public class Release implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idrelease")
+    private Collection<Sprint> sprintCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -73,6 +77,13 @@ public class Release implements Serializable {
 
     public Release(Integer idrelease, String version) {
         this.idrelease = idrelease;
+        this.version = version;
+    }
+    
+    public Release(Integer idrelease, Project idproject, String daterelease, String version) {
+        this.idrelease = idrelease;
+        this.idproject = idproject;
+        this.daterelease = new Date(daterelease);
         this.version = version;
     }
 
@@ -149,6 +160,15 @@ public class Release implements Serializable {
     @Override
     public String toString() {
         return "entities.Release[ idrelease=" + idrelease + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Sprint> getSprintCollection() {
+        return sprintCollection;
+    }
+
+    public void setSprintCollection(Collection<Sprint> sprintCollection) {
+        this.sprintCollection = sprintCollection;
     }
     
 }

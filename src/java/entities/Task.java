@@ -37,6 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Task.findByDescription", query = "SELECT t FROM Task t WHERE t.description = :description")})
 public class Task implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idtask")
+    private Collection<Sprint> sprintCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -143,6 +146,15 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         return "entities.Task[ idtask=" + idtask + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Sprint> getSprintCollection() {
+        return sprintCollection;
+    }
+
+    public void setSprintCollection(Collection<Sprint> sprintCollection) {
+        this.sprintCollection = sprintCollection;
     }
     
 }

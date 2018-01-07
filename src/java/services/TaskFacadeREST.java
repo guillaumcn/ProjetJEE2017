@@ -41,7 +41,7 @@ public class TaskFacadeREST {
     EntityTransaction tx = em.getTransaction();
     
     // Creation d'une tache
-    @GET
+    @PUT
     @Path("create")
     public String create(@QueryParam("idproject") Integer idproject, @QueryParam("description") String description) {
         try {
@@ -84,7 +84,7 @@ public class TaskFacadeREST {
     }
     
     // Supprime une tache
-    @GET
+    @DELETE
     @Path("{id}/delete")
     public String delete(@PathParam("id") Integer id) {
         try {
@@ -100,7 +100,7 @@ public class TaskFacadeREST {
     }
     
     // Change la description d'une tache
-    @GET
+    @POST
     @Path("{id}/update")
     public String updateDesc(@PathParam("id") Integer id, @QueryParam("description") String description) {
         try {
@@ -117,7 +117,7 @@ public class TaskFacadeREST {
     }
     
     // Change le status d'une tache
-    @GET
+    @POST
     @Path("{id}/updateStatus")
     public String updateStatus(@PathParam("id") Integer id, @QueryParam("status") String status) {
         try {
