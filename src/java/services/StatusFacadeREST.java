@@ -11,7 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,7 +35,7 @@ public class StatusFacadeREST {
    
     
     // Creation d'un status
-    @GET
+    @PUT
     @Path("create")
     public String create(@QueryParam("code") String code, @QueryParam("description") String description) {
         try {
@@ -62,8 +65,8 @@ public class StatusFacadeREST {
         }
     }
     
-    // Met a jour le stutus
-    @GET
+    // Met a jour le status
+    @POST
     @Path("{code}/update")
     public String updateStatus(@PathParam("code") String code, @QueryParam("description") String description) {
         try {
@@ -80,7 +83,7 @@ public class StatusFacadeREST {
     }
     
     // Supprime un status et retourne son code
-    @GET
+    @DELETE
     @Path("{code}/delete")
     public String delete(@PathParam("code") String code) {
         try {
