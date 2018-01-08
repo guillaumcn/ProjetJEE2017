@@ -163,21 +163,17 @@ public class ProjectFacadeREST {
             
             // création d'un objet en fonction du type de contact récupéré au dessus
             
-            // création d'un objet project_manager
-            if(res.getIsAdmin()){
-                ProjectManager pm = new ProjectManager(p.getIdproject(), res.getIdcontact());
-                return 1;
-            }
-            
             // création d'un objet project_client
-            else if(res.getIsClient()){
+            if(res.getIsClient()){
                 ProjectClient pc = new ProjectClient(p.getIdproject(), res.getIdcontact());
                 return 1;
             }
             
-            // création d'un objet project_team
+            // création d'un objet project_team et d'un object projet_manager + affectation à isAdmin du contact
             else if(res.getIsTeam()){
                 ProjectTeam pt = new ProjectTeam(1, p, res);
+                ProjectManager pm = new ProjectManager(1, res.getIdcontact());
+                res.setIsAdmin(true);
                 return 1;
             }
             

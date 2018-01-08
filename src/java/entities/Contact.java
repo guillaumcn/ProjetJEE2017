@@ -81,9 +81,7 @@ public class Contact implements Serializable {
             case "client" :
                 this.isClient = true;
                 break;
-            case "admin" :
-                this.isAdmin = true;
-                break;
+            // on enlève le cas admin : on le crée pas, il le devient en créant un projet
             case "team" :
                 this.isTeam = true;
                 break;

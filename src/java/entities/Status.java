@@ -47,8 +47,9 @@ public class Status implements Serializable {
     public Status() {
     }
 
-    public Status(String codeStatus) {
-        this.codeStatus = codeStatus;
+    public Status(String code, String desc) {
+        this.codeStatus = code;
+        this.description = desc;
     }
 
     public String getCodeStatus() {
