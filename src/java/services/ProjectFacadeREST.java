@@ -194,6 +194,42 @@ public class ProjectFacadeREST {
         }
     }
     
+    // Retourne la liste des contacts participant à un projet
+    @GET
+    @Path("{id}/getTeam")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Contact> getTeam(@PathParam("idproject") Integer idproject) {
+        try {
+            // Initialisation de la liste de réponse
+            List<Contact> res = null;
+            // Recuperation des clients
+            Query q = em.createQuery("select c from Contact c inner join project_client as pc on c.idcontact = pc.idclient where pc.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            List<Contact> temp = q.getResultList();
+            for(int i = 0; i < temp.size(); i++) {
+                res.add(temp.get(i));
+            }
+            // Recuperation des managers
+            q = em.createQuery("select c from Contact c inner join project_manager as pm on c.idcontact = pm.idmanager where pm.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            temp = q.getResultList();
+            for(int i = 0; i < temp.size(); i++) {
+                res.add(temp.get(i));
+            }
+            
+            // Recuperation des autres
+            q = em.createQuery("select c from Contact c inner join project_team as pt on c.idcontact = pt.idmember where pm.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            temp = q.getResultList();
+            for(int i = 0; i < temp.size(); i++) {
+                res.add(temp.get(i));
+            }
+            
+            return res;
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
 
     
     /*public ProjectFacadeREST() {

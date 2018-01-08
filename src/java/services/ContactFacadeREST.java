@@ -107,4 +107,55 @@ public class ContactFacadeREST {
         return q.getResultList();
     }
     
+    // Modification du status du contact
+    @POST
+    @Path("{id}/updateState")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String updateState(@PathParam("id") Integer idcontact, @QueryParam("state") String newstate) {
+        Query q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
+        q.setParameter("idparam", idcontact);
+        Contact client = (Contact) q.getSingleResult();
+        try {
+            tx.begin();
+            // On verifie quel etat doit change
+            switch(newstate) {
+                case "admin":
+                    // Si TRUE alors on passe l'etat a FALSE
+                    if(client.getIsAdmin()) {
+                        client.setIsAdmin(Boolean.FALSE);
+                        break;
+                    }
+                    // SI FALSE alors on passe l'etat a TRUE
+                    else {
+                        client.setIsAdmin(Boolean.TRUE);
+                        break;
+                    }
+                case "team":
+                    if(client.getIsTeam()) {
+                        client.setIsTeam(Boolean.FALSE);
+                        break;
+                    }
+                    else {
+                        client.setIsTeam(Boolean.TRUE);
+                        break;
+                    }
+                case "client":
+                    if(client.getIsClient()) {
+                        client.setIsClient(Boolean.FALSE);
+                        break;
+                    }
+                    else {
+                        client.setIsClient(Boolean.TRUE);
+                        break;
+                    }
+                default:
+                    return "Mauvais paramètres";
+            }
+            em.persist(client);
+            tx.commit();
+            return "OK";
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
 }
