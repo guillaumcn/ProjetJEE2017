@@ -26,6 +26,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import entities.Contact;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -42,10 +43,9 @@ public class ProjectFacadeREST {
     // Creation d'un projet
     @PUT
     @Path("create")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Integer create(@QueryParam("code") String code) {
+    public Integer create(@QueryParam("nom") String nom) {
         try {
-            Project p = new Project(1, code);
+            Project p = new Project(1, nom);
             tx.begin();
             em.persist(p);
             tx.commit();
@@ -137,8 +137,12 @@ public class ProjectFacadeREST {
     @Path("getAll")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Project> getAll() {
-        Query q = em.createQuery("select p from Project p");
-        return q.getResultList();
+        try {
+            Query q = em.createQuery("select p from Project p");
+            return q.getResultList();
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
     }
     
     @PUT 
@@ -150,17 +154,20 @@ public class ProjectFacadeREST {
             tx.begin();
             // récupération du projet en param
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            Query q2 = em.createQuery("select c from Contact c where c.idcontact=:idparam2");
             q.setParameter("idparam", id);
+            q2.setParameter("idparam2", idContact);
             Project p = (Project) q.getSingleResult();
-            p.setContacts(idContact);
-            
-            em.persist(p);
-            tx.commit();
-            return "OK";
+            List<Contact> c = q2.getResultList();
+            if(c.isEmpty()) {
+                return "ID Contact inconnu";
+            } else {
+                p.setContacts(idContact);
+                em.persist(p);
+                tx.commit();
+                return "OK";
+            }
         } catch (Exception e) {
-            System.out.println("id project : " + id);
-            System.out.println("id contact : " + idContact);
-            // url testé : http://localhost:8080/ProjetJEE/webresources/project/1/addContact?idContact=1
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -170,91 +177,25 @@ public class ProjectFacadeREST {
     @Path("{id}/getTeam")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Contact> getTeam(@PathParam("id") Integer idproject) {
-        Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
-        q.setParameter("idparam", idproject);
-        Project project = (Project) q.getSingleResult();
         try {
-            // Initialisation de la liste de réponse
-            List<Contact> res = null;
-            // Recuperation des clients
-            q = em.createQuery("select c from Contact c, ProjectClient pc where pc.contact.idcontact = c.idcontact and pc.project.idproject=:idparam");
-            q.setParameter("idparam", project.getIdproject());
-            // Contact c = (Contact) q.getSingleResult();
-            List<Contact> temp = q.getResultList();
-            res = temp;
-            /* for(int i = 0; i < temp.size(); i++) {
-                // System.out.println(temp.get(i).toString());
-                res.add(temp.get(i));
-            } */
-            // Recuperation des managers
-            q = em.createQuery("select c from Contact c, ProjectManager pm where pm.contact.idcontact = c.idcontact and pm.project.idproject=:idparam");
-            q.setParameter("idparam", project.getIdproject());
-            temp = q.getResultList();
-            res.addAll(temp);
-            /* for(int i = 0; i < temp.size() - 1; i++) {
-                res.add(temp.get(i));
-            } */
-            
-            // Recuperation des autres
-            // q = em.createQuery("select c from Contact c inner join ProjectTeam as pt on c.idcontact = pt.idmember where pm.idproject=:idparam");
-            q = em.createQuery("select c from Contact c, ProjectTeam pt where pt.idmember.idcontact = c.idcontact and pt.idproject.idproject=:idparam");
-            q.setParameter("idparam", project.getIdproject());
-            temp = q.getResultList();
-            res.addAll(temp);
-            /* for(int i = 0; i < temp.size() - 1; i++) {
-                res.add(temp.get(i));
-            } */
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            Project p = (Project) q.getSingleResult();
+            String contacts = p.getContacts().substring(1);
+            String contact_temp = contacts.substring(0, contacts.length() - 1);
+            String[] list_contact = contact_temp.split(",");
+            List<Contact> res = new ArrayList<Contact>();
+            for(int i = 0; i < list_contact.length; i++) {
+                int id = Integer.parseInt(list_contact[i]);
+                q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
+                q.setParameter("idparam", id);
+                Contact c = (Contact) q.getSingleResult();
+                res.add(c);
+            }
             return res;
         } catch(Exception e) {
             e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-    }
-
-    
-    /*public ProjectFacadeREST() {
-        super(Project.class);
-    }
-    @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Project entity) {
-        super.create(entity);
-    }
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Project entity) {
-        super.edit(entity);
-    }
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
-    }
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Project find(@PathParam("id") Integer id) {
-        return super.find(id);
-    }
-    @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Project> findAll() {
-        return super.findAll();
-    }
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Project> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    } */
-    
+    } 
 }

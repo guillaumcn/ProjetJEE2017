@@ -113,8 +113,13 @@ public class ContactFacadeREST {
     // Le resultat est produit en JSON
     @Produces({MediaType.APPLICATION_JSON})
     public List<Contact> findAll() {
-        Query q = em.createQuery("select c from Contact c");
-        return q.getResultList();
+        try {
+            Query q = em.createQuery("select c from Contact c");
+            return q.getResultList();
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+        
     }
     
     // Modification du status du contact

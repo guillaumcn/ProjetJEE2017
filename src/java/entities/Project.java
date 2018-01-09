@@ -72,17 +72,20 @@ public class Project implements Serializable {
 
     public Project(Integer idproject) {
         this.idproject = idproject;
+        this.contacts = "[]";
     }
 
     public Project(Integer idproject, String nom) {
         this.idproject = idproject;
         this.nom = nom;
+        this.contacts = "[]";
     }
     
     public Project(Integer idproject, String nom, String description) {
         this.idproject = idproject;
         this.nom = nom;
         this.description = description;
+        this.contacts = "[]";
     }
     
     public Project(Integer idproject, String nom, String description, String startDate) {
@@ -90,6 +93,7 @@ public class Project implements Serializable {
         this.nom = nom;
         this.description = description;
         this.startDate = new Date(startDate);
+        this.contacts = "[]";
     }
 
     public Integer getIdproject() {
@@ -121,7 +125,10 @@ public class Project implements Serializable {
     }
 
     public void setContacts(Integer contacts) {
-        this.contacts += contacts + ",";
+        String temp = this.contacts.substring(1);
+        String temp2 = temp.substring(0, temp.length() - 1);
+        temp2 += contacts + ",";
+        this.contacts = "[" + temp2 + "]";
     }
 
     public Date getStartDate() {
