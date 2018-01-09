@@ -144,7 +144,7 @@ public class ProjectFacadeREST {
     @PUT 
     @Path("{id}/addContact")
     // retourne 1 si OK sinon 0
-    public Integer addContact(@PathParam("id") Integer id, @QueryParam("idContact") Integer idContact){
+    public String addContact(@PathParam("id") Integer id, @QueryParam("idContact") Integer idContact) {
         // on part du principe qu'il ne peut être QUE admin, client ou team
         try {
             tx.begin();
@@ -152,39 +152,11 @@ public class ProjectFacadeREST {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
             Project p = (Project) q.getSingleResult();
+            p.setContacts(idContact);
             
-            // récupération du type de contact depuis son id en param
-            Query q2 = em.createQuery("select c from Contact c where c.idcontact=:idContact");
-            q2.setParameter("idContact", idContact);
-            Contact res = (Contact) q2.getSingleResult();
-            
-            // création d'un objet en fonction du type de contact récupéré au dessus
-            
-            // création d'un objet project_client
-            if(res.getIsClient()){
-                ProjectClient pc = new ProjectClient(p.getIdproject(), res.getIdcontact());
-                em.persist(pc);
-                tx.commit();
-                return 1;
-            }
-            
-            // création d'un objet project_team et d'un object projet_manager + affectation à isAdmin du contact
-            else if(res.getIsTeam()){
-                ProjectTeam pt = new ProjectTeam(1, p, res);
-                ProjectManager pm = new ProjectManager(p, res);
-                res.setIsAdmin(true);
-                em.persist(pt);
-                em.persist(pm);
-                em.persist(res);
-                tx.commit();
-                return 1;
-            }
-            
-            // si erreur, on renvoie 0
-            else {
-                return 0;
-            }
-            
+            em.persist(p);
+            tx.commit();
+            return "OK";
         } catch (Exception e) {
             System.out.println("id project : " + id);
             System.out.println("id contact : " + idContact);

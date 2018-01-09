@@ -41,13 +41,13 @@ public class ContactFacadeREST {
         // Status : Client, Team ou Admin
         // Si on met 1 l'id va s'autoincrement
         try {
-            if(status == "admin") {
+            if(status.equals("admin")) {
                 Contact c = new Contact(1, login, password, Boolean.TRUE);
                 tx.begin();
                 em.persist(c);
                 tx.commit();
                 return "OK";
-            } else if(status == "client") {
+            } else if(status.equals("client")) {
                 Contact c = new Contact(1, login, password, Boolean.FALSE);
                 tx.begin();
                 em.persist(c);
@@ -57,7 +57,7 @@ public class ContactFacadeREST {
                 return "Mauvais status 'admin'/'client'";
             }
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return "Login déjà utilisé";
         }
     }
     
@@ -72,13 +72,13 @@ public class ContactFacadeREST {
             Contact c = (Contact) q.getSingleResult();
             return c;
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return new Contact();
         }
     }
     
     @POST
     @Path("{id}/update")
-    public Integer updateContact(@PathParam("id") Integer id, @QueryParam("login") String login, @QueryParam("password") String password) {
+    public String updateContact(@PathParam("id") Integer id, @QueryParam("login") String login, @QueryParam("password") String password) {
         try {
             tx.begin();
             Query q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
@@ -87,9 +87,9 @@ public class ContactFacadeREST {
             c.setLogin(login);
             c.setPassword(password);
             tx.commit();
-            return c.getIdcontact();
+            return "OK";
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return "Utilisateur inconnu";
         }
     }
     
@@ -104,7 +104,7 @@ public class ContactFacadeREST {
             tx.commit();
             return "OK";
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            return "Utilisateur inconnu";
         }
     }
     
@@ -128,38 +128,12 @@ public class ContactFacadeREST {
         try {
             tx.begin();
             // On verifie quel etat doit change
-            switch(newstate) {
-                case "admin":
-                    // Si TRUE alors on passe l'etat a FALSE
-                    if(client.getIsAdmin()) {
-                        client.setIsAdmin(Boolean.FALSE);
-                        break;
-                    }
-                    // SI FALSE alors on passe l'etat a TRUE
-                    else {
-                        client.setIsAdmin(Boolean.TRUE);
-                        break;
-                    }
-                case "team":
-                    if(client.getIsTeam()) {
-                        client.setIsTeam(Boolean.FALSE);
-                        break;
-                    }
-                    else {
-                        client.setIsTeam(Boolean.TRUE);
-                        break;
-                    }
-                case "client":
-                    if(client.getIsClient()) {
-                        client.setIsClient(Boolean.FALSE);
-                        break;
-                    }
-                    else {
-                        client.setIsClient(Boolean.TRUE);
-                        break;
-                    }
-                default:
-                    return "Mauvais paramètres";
+            if(newstate == "admin") {
+                if(!client.getAdmin())
+                    client.setAdmin(Boolean.TRUE);
+            } else if(newstate == "client")
+                if(client.getAdmin()) {
+                    client.setAdmin(Boolean.FALSE);
             }
             em.persist(client);
             tx.commit();
