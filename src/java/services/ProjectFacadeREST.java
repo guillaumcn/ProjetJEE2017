@@ -26,9 +26,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import entities.Contact;
-import entities.ProjectManager;
-import entities.ProjectClient;
-import entities.ProjectTeam;
 import java.util.Date;
 
 /**

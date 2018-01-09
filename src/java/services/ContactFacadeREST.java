@@ -37,15 +37,25 @@ public class ContactFacadeREST {
 
     @PUT
     @Path("create")
-    public Integer create(@QueryParam("login") String login, @QueryParam("password") String password, @QueryParam("status") String status) {
+    public String create(@QueryParam("login") String login, @QueryParam("password") String password, @QueryParam("status") String status) {
         // Status : Client, Team ou Admin
         // Si on met 1 l'id va s'autoincrement
         try {
-            Contact c = new Contact(1, login, password, status);
-            tx.begin();
-            em.persist(c);
-            tx.commit();
-            return c.getIdcontact();
+            if(status == "admin") {
+                Contact c = new Contact(1, login, password, Boolean.TRUE);
+                tx.begin();
+                em.persist(c);
+                tx.commit();
+                return "OK";
+            } else if(status == "client") {
+                Contact c = new Contact(1, login, password, Boolean.FALSE);
+                tx.begin();
+                em.persist(c);
+                tx.commit();
+                return "OK";
+            } else {
+                return "Mauvais status 'admin'/'client'";
+            }
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
