@@ -120,8 +120,8 @@ public class Project implements Serializable {
         return contacts;
     }
 
-    public void setContacts(String contacts) {
-        this.contacts = contacts;
+    public void setContacts(Integer contacts) {
+        this.contacts += contacts + ",";
     }
 
     public Date getStartDate() {
