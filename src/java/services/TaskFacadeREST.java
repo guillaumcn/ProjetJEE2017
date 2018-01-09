@@ -43,7 +43,7 @@ public class TaskFacadeREST {
     // Creation d'une tache
     @PUT
     @Path("create")
-    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("description") String description) {
+    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("code_status") String code_status) {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", idproject);
@@ -53,7 +53,7 @@ public class TaskFacadeREST {
             } else {
                 Query q2 = em.createQuery("select s from Status s where s.codeStatus = \"TODO\"");
                 Object status = q2.getSingleResult();
-                Task t = new Task(1, (Project) index.get(0), description, (Status) status);
+                Task t = new Task(1, (Project) index.get(0), code_status, (Status) status);
                 tx.begin();
                 em.persist(t);
                 tx.commit();

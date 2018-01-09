@@ -74,6 +74,12 @@ public class Task implements Serializable {
         this.idtask = idtask;
     }
 
+    /**
+     * 
+     * @param idtask
+     * @param status 
+     * status possibles : 1 - 2 - 3 ou 4 pour "TODO" - "IN PROGRESS" - "DONE" ou "VALIDATED"
+     */
     public Task(Integer idtask, int status) {
         this.idtask = idtask;
         this.status = status;

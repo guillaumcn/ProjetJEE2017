@@ -73,6 +73,18 @@ public class ReleaseProject implements Serializable {
         this.idrelease = idrelease;
         this.version = version;
     }
+    
+    /**
+     * 
+     * @param idProject
+     * @param version 
+     * constructeur à utiliser depuis la maj de bd
+     * Crée une release depuis un idProject avec une description version 
+     */
+    public ReleaseProject(Project idProject, String version){
+        this.idproject = idProject;
+        this.version = version;
+    }
 
     public Integer getIdrelease() {
         return idrelease;

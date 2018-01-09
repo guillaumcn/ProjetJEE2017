@@ -5,7 +5,7 @@
  */
 package services;
 
-import entities.Release;
+import entities.ReleaseProject;
 import entities.Project;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -45,11 +45,12 @@ public class ReleaseFacadeREST {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", idproject);
-            List<Project> p = q.getResultList();
-            if(p.isEmpty()) {
+            Project p = (Project) q.getResultList();
+            if(p == null) {
+                System.out.println("p : " + p);
                 return "Id Project non valide";
             } else {
-                Release release = new Release(1, (Project) p.get(0), daterelease, "1");
+                ReleaseProject release = new ReleaseProject(p, daterelease);
                 tx.begin();
                 em.persist(release);
                 tx.commit();
