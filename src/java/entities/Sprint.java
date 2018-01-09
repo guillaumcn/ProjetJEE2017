@@ -7,6 +7,7 @@ package entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,19 +17,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author christianpagh-birk
+ * @author root
  */
 @Entity
 @Table(name = "sprint")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Sprint.findAll", query = "SELECT s FROM Sprint s")
-    , @NamedQuery(name = "Sprint.findByIdsprint", query = "SELECT s FROM Sprint s WHERE s.idsprint = :idsprint")})
+    , @NamedQuery(name = "Sprint.findByIdsprint", query = "SELECT s FROM Sprint s WHERE s.idsprint = :idsprint")
+    , @NamedQuery(name = "Sprint.findByDescription", query = "SELECT s FROM Sprint s WHERE s.description = :description")})
 public class Sprint implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,12 +41,14 @@ public class Sprint implements Serializable {
     @Basic(optional = false)
     @Column(name = "idsprint")
     private Integer idsprint;
+    @Size(max = 255)
+    @Column(name = "description")
+    private String description;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idsprint")
+    private Task task;
     @JoinColumn(name = "idrelease", referencedColumnName = "idrelease")
     @ManyToOne(optional = false)
-    private Release idrelease;
-    @JoinColumn(name = "idtask", referencedColumnName = "idtask")
-    @ManyToOne(optional = false)
-    private Task idtask;
+    private ReleaseProject idrelease;
 
     public Sprint() {
     }
@@ -59,20 +65,28 @@ public class Sprint implements Serializable {
         this.idsprint = idsprint;
     }
 
-    public Release getIdrelease() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public ReleaseProject getIdrelease() {
         return idrelease;
     }
 
-    public void setIdrelease(Release idrelease) {
+    public void setIdrelease(ReleaseProject idrelease) {
         this.idrelease = idrelease;
-    }
-
-    public Task getIdtask() {
-        return idtask;
-    }
-
-    public void setIdtask(Task idtask) {
-        this.idtask = idtask;
     }
 
     @Override

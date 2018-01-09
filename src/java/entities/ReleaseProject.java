@@ -16,34 +16,31 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Guillaume
+ * @author root
  */
 @Entity
-@Table(name = "release")
+@Table(name = "releaseProject")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Release.findAll", query = "SELECT r FROM Release r")
-    , @NamedQuery(name = "Release.findByIdrelease", query = "SELECT r FROM Release r WHERE r.idrelease = :idrelease")
-    , @NamedQuery(name = "Release.findByDaterelease", query = "SELECT r FROM Release r WHERE r.daterelease = :daterelease")
-    , @NamedQuery(name = "Release.findByVersion", query = "SELECT r FROM Release r WHERE r.version = :version")})
-public class Release implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idrelease")
-    private Collection<Sprint> sprintCollection;
+    @NamedQuery(name = "ReleaseProject.findAll", query = "SELECT r FROM ReleaseProject r")
+    , @NamedQuery(name = "ReleaseProject.findByIdrelease", query = "SELECT r FROM ReleaseProject r WHERE r.idrelease = :idrelease")
+    , @NamedQuery(name = "ReleaseProject.findByDaterelease", query = "SELECT r FROM ReleaseProject r WHERE r.daterelease = :daterelease")
+    , @NamedQuery(name = "ReleaseProject.findByVersion", query = "SELECT r FROM ReleaseProject r WHERE r.version = :version")})
+public class ReleaseProject implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,35 +52,25 @@ public class Release implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date daterelease;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "version")
     private String version;
-    @JoinTable(name = "sprint", joinColumns = {
-        @JoinColumn(name = "idrelease", referencedColumnName = "idrelease")}, inverseJoinColumns = {
-        @JoinColumn(name = "idtask", referencedColumnName = "idtask")})
-    @ManyToMany
-    private Collection<Task> taskCollection;
-    @OneToMany(mappedBy = "idrelease")
-    private Collection<ProjectClient> projectClientCollection;
     @JoinColumn(name = "idproject", referencedColumnName = "idproject")
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     private Project idproject;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idrelease")
+    private Collection<Sprint> sprintCollection;
 
-    public Release() {
+    public ReleaseProject() {
     }
 
-    public Release(Integer idrelease) {
+    public ReleaseProject(Integer idrelease) {
         this.idrelease = idrelease;
     }
 
-    public Release(Integer idrelease, String version) {
+    public ReleaseProject(Integer idrelease, String version) {
         this.idrelease = idrelease;
-        this.version = version;
-    }
-    
-    public Release(Integer idrelease, Project idproject, String daterelease, String version) {
-        this.idrelease = idrelease;
-        this.idproject = idproject;
-        this.daterelease = new Date(daterelease);
         this.version = version;
     }
 
@@ -111,30 +98,21 @@ public class Release implements Serializable {
         this.version = version;
     }
 
-    @XmlTransient
-    public Collection<Task> getTaskCollection() {
-        return taskCollection;
-    }
-
-    public void setTaskCollection(Collection<Task> taskCollection) {
-        this.taskCollection = taskCollection;
-    }
-
-    @XmlTransient
-    public Collection<ProjectClient> getProjectClientCollection() {
-        return projectClientCollection;
-    }
-
-    public void setProjectClientCollection(Collection<ProjectClient> projectClientCollection) {
-        this.projectClientCollection = projectClientCollection;
-    }
-
     public Project getIdproject() {
         return idproject;
     }
 
     public void setIdproject(Project idproject) {
         this.idproject = idproject;
+    }
+
+    @XmlTransient
+    public Collection<Sprint> getSprintCollection() {
+        return sprintCollection;
+    }
+
+    public void setSprintCollection(Collection<Sprint> sprintCollection) {
+        this.sprintCollection = sprintCollection;
     }
 
     @Override
@@ -147,10 +125,10 @@ public class Release implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Release)) {
+        if (!(object instanceof ReleaseProject)) {
             return false;
         }
-        Release other = (Release) object;
+        ReleaseProject other = (ReleaseProject) object;
         if ((this.idrelease == null && other.idrelease != null) || (this.idrelease != null && !this.idrelease.equals(other.idrelease))) {
             return false;
         }
@@ -159,16 +137,7 @@ public class Release implements Serializable {
 
     @Override
     public String toString() {
-        return "entities.Release[ idrelease=" + idrelease + " ]";
-    }
-
-    @XmlTransient
-    public Collection<Sprint> getSprintCollection() {
-        return sprintCollection;
-    }
-
-    public void setSprintCollection(Collection<Sprint> sprintCollection) {
-        this.sprintCollection = sprintCollection;
+        return "entities.ReleaseProject[ idrelease=" + idrelease + " ]";
     }
     
 }

@@ -6,27 +6,27 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Guillaume
+ * @author root
  */
 @Entity
 @Table(name = "task")
@@ -34,11 +34,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Task.findAll", query = "SELECT t FROM Task t")
     , @NamedQuery(name = "Task.findByIdtask", query = "SELECT t FROM Task t WHERE t.idtask = :idtask")
-    , @NamedQuery(name = "Task.findByDescription", query = "SELECT t FROM Task t WHERE t.description = :description")})
+    , @NamedQuery(name = "Task.findByContacts", query = "SELECT t FROM Task t WHERE t.contacts = :contacts")
+    , @NamedQuery(name = "Task.findByDateStart", query = "SELECT t FROM Task t WHERE t.dateStart = :dateStart")
+    , @NamedQuery(name = "Task.findByDateEnd", query = "SELECT t FROM Task t WHERE t.dateEnd = :dateEnd")
+    , @NamedQuery(name = "Task.findByDescription", query = "SELECT t FROM Task t WHERE t.description = :description")
+    , @NamedQuery(name = "Task.findByStatus", query = "SELECT t FROM Task t WHERE t.status = :status")})
 public class Task implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idtask")
-    private Collection<Sprint> sprintCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,18 +47,25 @@ public class Task implements Serializable {
     @Basic(optional = false)
     @Column(name = "idtask")
     private Integer idtask;
+    @Size(max = 255)
+    @Column(name = "contacts")
+    private String contacts;
+    @Column(name = "dateStart")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateStart;
+    @Column(name = "dateEnd")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateEnd;
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @ManyToMany(mappedBy = "taskCollection")
-    private Collection<Release> releaseCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idtask")
-    private Collection<ProjectTeam> projectTeamCollection;
-    @JoinColumn(name = "idproject", referencedColumnName = "idproject")
-    @ManyToOne(optional = false)
-    private Project idproject;
-    @JoinColumn(name = "status", referencedColumnName = "code_status")
-    @ManyToOne(optional = false)
-    private Status status;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "status")
+    private int status;
+    @JoinColumn(name = "idsprint", referencedColumnName = "idsprint")
+    @OneToOne(optional = false)
+    private Sprint idsprint;
 
     public Task() {
     }
@@ -65,11 +73,9 @@ public class Task implements Serializable {
     public Task(Integer idtask) {
         this.idtask = idtask;
     }
-    
-    public Task(Integer idtask, Project idproject, String description, Status status) {
+
+    public Task(Integer idtask, int status) {
         this.idtask = idtask;
-        this.idproject = idproject;
-        this.description = description;
         this.status = status;
     }
 
@@ -81,6 +87,30 @@ public class Task implements Serializable {
         this.idtask = idtask;
     }
 
+    public String getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(String contacts) {
+        this.contacts = contacts;
+    }
+
+    public Date getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(Date dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -89,38 +119,20 @@ public class Task implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
-    public Collection<Release> getReleaseCollection() {
-        return releaseCollection;
-    }
-
-    public void setReleaseCollection(Collection<Release> releaseCollection) {
-        this.releaseCollection = releaseCollection;
-    }
-
-    @XmlTransient
-    public Collection<ProjectTeam> getProjectTeamCollection() {
-        return projectTeamCollection;
-    }
-
-    public void setProjectTeamCollection(Collection<ProjectTeam> projectTeamCollection) {
-        this.projectTeamCollection = projectTeamCollection;
-    }
-
-    public Project getIdproject() {
-        return idproject;
-    }
-
-    public void setIdproject(Project idproject) {
-        this.idproject = idproject;
-    }
-
-    public Status getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    public Sprint getIdsprint() {
+        return idsprint;
+    }
+
+    public void setIdsprint(Sprint idsprint) {
+        this.idsprint = idsprint;
     }
 
     @Override
@@ -146,15 +158,6 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         return "entities.Task[ idtask=" + idtask + " ]";
-    }
-
-    @XmlTransient
-    public Collection<Sprint> getSprintCollection() {
-        return sprintCollection;
-    }
-
-    public void setSprintCollection(Collection<Sprint> sprintCollection) {
-        this.sprintCollection = sprintCollection;
     }
     
 }

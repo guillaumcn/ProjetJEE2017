@@ -6,7 +6,6 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -17,16 +16,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Guillaume
+ * @author root
  */
 @Entity
 @Table(name = "project")
@@ -34,9 +34,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p")
     , @NamedQuery(name = "Project.findByIdproject", query = "SELECT p FROM Project p WHERE p.idproject = :idproject")
-    , @NamedQuery(name = "Project.findByCode", query = "SELECT p FROM Project p WHERE p.code = :code")
+    , @NamedQuery(name = "Project.findByNom", query = "SELECT p FROM Project p WHERE p.nom = :nom")
     , @NamedQuery(name = "Project.findByDescription", query = "SELECT p FROM Project p WHERE p.description = :description")
-    , @NamedQuery(name = "Project.findByStartdate", query = "SELECT p FROM Project p WHERE p.startdate = :startdate")})
+    , @NamedQuery(name = "Project.findByContacts", query = "SELECT p FROM Project p WHERE p.contacts = :contacts")
+    , @NamedQuery(name = "Project.findByStartDate", query = "SELECT p FROM Project p WHERE p.startDate = :startDate")
+    , @NamedQuery(name = "Project.findByEndDate", query = "SELECT p FROM Project p WHERE p.endDate = :endDate")})
 public class Project implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,23 +48,24 @@ public class Project implements Serializable {
     @Column(name = "idproject")
     private Integer idproject;
     @Basic(optional = false)
-    @Column(name = "code")
-    private String code;
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "nom")
+    private String nom;
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @Column(name = "startdate")
+    @Size(max = 255)
+    @Column(name = "contacts")
+    private String contacts;
+    @Column(name = "startDate")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date startdate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idproject")
-    private Collection<ProjectTeam> projectTeamCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idproject")
-    private Collection<Task> taskCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
-    private Collection<ProjectClient> projectClientCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idproject")
-    private Collection<Release> releaseCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
-    private Collection<ProjectManager> projectManagerCollection;
+    private Date startDate;
+    @Column(name = "endDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endDate;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idproject")
+    private ReleaseProject releaseProject;
 
     public Project() {
     }
@@ -71,22 +74,9 @@ public class Project implements Serializable {
         this.idproject = idproject;
     }
 
-    public Project(Integer idproject, String code) {
+    public Project(Integer idproject, String nom) {
         this.idproject = idproject;
-        this.code = code;
-    }
-    
-    public Project(Integer idproject, String code, String desc) {
-        this.idproject = idproject;
-        this.code = code;
-        this.description = desc;
-    }
-    
-    public Project(Integer idproject, String code, String desc, String start) {
-        this.idproject = idproject;
-        this.code = code;
-        this.description = desc;
-        this.startdate = new Date(start);
+        this.nom = nom;
     }
 
     public Integer getIdproject() {
@@ -97,12 +87,12 @@ public class Project implements Serializable {
         this.idproject = idproject;
     }
 
-    public String getCode() {
-        return code;
+    public String getNom() {
+        return nom;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public String getDescription() {
@@ -113,57 +103,36 @@ public class Project implements Serializable {
         this.description = description;
     }
 
-    public Date getStartdate() {
-        return startdate;
+    public String getContacts() {
+        return contacts;
     }
 
-    public void setStartdate(Date startdate) {
-        this.startdate = startdate;
+    public void setContacts(String contacts) {
+        this.contacts = contacts;
     }
 
-    @XmlTransient
-    public Collection<ProjectTeam> getProjectTeamCollection() {
-        return projectTeamCollection;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setProjectTeamCollection(Collection<ProjectTeam> projectTeamCollection) {
-        this.projectTeamCollection = projectTeamCollection;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    @XmlTransient
-    public Collection<Task> getTaskCollection() {
-        return taskCollection;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setTaskCollection(Collection<Task> taskCollection) {
-        this.taskCollection = taskCollection;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
-    @XmlTransient
-    public Collection<ProjectClient> getProjectClientCollection() {
-        return projectClientCollection;
+    public ReleaseProject getReleaseProject() {
+        return releaseProject;
     }
 
-    public void setProjectClientCollection(Collection<ProjectClient> projectClientCollection) {
-        this.projectClientCollection = projectClientCollection;
-    }
-
-    @XmlTransient
-    public Collection<Release> getReleaseCollection() {
-        return releaseCollection;
-    }
-
-    public void setReleaseCollection(Collection<Release> releaseCollection) {
-        this.releaseCollection = releaseCollection;
-    }
-
-    @XmlTransient
-    public Collection<ProjectManager> getProjectManagerCollection() {
-        return projectManagerCollection;
-    }
-
-    public void setProjectManagerCollection(Collection<ProjectManager> projectManagerCollection) {
-        this.projectManagerCollection = projectManagerCollection;
+    public void setReleaseProject(ReleaseProject releaseProject) {
+        this.releaseProject = releaseProject;
     }
 
     @Override

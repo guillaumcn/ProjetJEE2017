@@ -49,14 +49,14 @@ public class ReleaseFacadeREST {
             if(p.isEmpty()) {
                 return "Id Project non valide";
             } else {
-                String testReleaseVersionDeLaConDeTaRace = "1";
-                Release release = new Release(1, (Project) p.get(0), daterelease, testReleaseVersionDeLaConDeTaRace);
+                Release release = new Release(1, (Project) p.get(0), daterelease, "1");
                 tx.begin();
                 em.persist(release);
                 tx.commit();
                 return "OK";
             }
         } catch(Exception e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }

@@ -6,9 +6,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,14 +14,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Guillaume
+ * @author root
  */
 @Entity
 @Table(name = "contact")
@@ -33,9 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Contact.findByIdcontact", query = "SELECT c FROM Contact c WHERE c.idcontact = :idcontact")
     , @NamedQuery(name = "Contact.findByLogin", query = "SELECT c FROM Contact c WHERE c.login = :login")
     , @NamedQuery(name = "Contact.findByPassword", query = "SELECT c FROM Contact c WHERE c.password = :password")
-    , @NamedQuery(name = "Contact.findByIsClient", query = "SELECT c FROM Contact c WHERE c.isClient = :isClient")
-    , @NamedQuery(name = "Contact.findByIsTeam", query = "SELECT c FROM Contact c WHERE c.isTeam = :isTeam")
-    , @NamedQuery(name = "Contact.findByIsAdmin", query = "SELECT c FROM Contact c WHERE c.isAdmin = :isAdmin")})
+    , @NamedQuery(name = "Contact.findByAdmin", query = "SELECT c FROM Contact c WHERE c.admin = :admin")})
 public class Contact implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,23 +41,17 @@ public class Contact implements Serializable {
     @Column(name = "idcontact")
     private Integer idcontact;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "login")
     private String login;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "password")
     private String password;
-    @Column(name = "isClient")
-    private Boolean isClient;
-    @Column(name = "isTeam")
-    private Boolean isTeam;
-    @Column(name = "isAdmin")
-    private Boolean isAdmin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idmember")
-    private Collection<ProjectTeam> projectTeamCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
-    private Collection<ProjectClient> projectClientCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
-    private Collection<ProjectManager> projectManagerCollection;
+    @Column(name = "admin")
+    private Boolean admin;
 
     public Contact() {
     }
@@ -70,26 +60,11 @@ public class Contact implements Serializable {
         this.idcontact = idcontact;
     }
 
-    public Contact(Integer idcontact, String login, String password, String status) {
+    public Contact(Integer idcontact, String login, String password) {
         this.idcontact = idcontact;
         this.login = login;
         this.password = password;
-        this.isAdmin = false;
-        this.isClient = false;
-        this.isTeam = false;
-        switch(status) {
-            case "client" :
-                this.isClient = true;
-                break;
-            // on enlève le cas admin : on le crée pas, il le devient en créant un projet
-            case "team" :
-                this.isTeam = true;
-                break;
-            default : 
-                System.err.println("status invalide");
-        }
     }
-   
 
     public Integer getIdcontact() {
         return idcontact;
@@ -115,55 +90,12 @@ public class Contact implements Serializable {
         this.password = password;
     }
 
-    public Boolean getIsClient() {
-        return isClient;
+    public Boolean getAdmin() {
+        return admin;
     }
 
-    public void setIsClient(Boolean isClient) {
-        this.isClient = isClient;
-    }
-
-    public Boolean getIsTeam() {
-        return isTeam;
-    }
-
-    public void setIsTeam(Boolean isTeam) {
-        this.isTeam = isTeam;
-    }
-
-    public Boolean getIsAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(Boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
-    @XmlTransient
-    public Collection<ProjectTeam> getProjectTeamCollection() {
-        return projectTeamCollection;
-    }
-
-    public void setProjectTeamCollection(Collection<ProjectTeam> projectTeamCollection) {
-        this.projectTeamCollection = projectTeamCollection;
-    }
-
-    @XmlTransient
-    public Collection<ProjectClient> getProjectClientCollection() {
-        return projectClientCollection;
-    }
-
-    public void setProjectClientCollection(Collection<ProjectClient> projectClientCollection) {
-        this.projectClientCollection = projectClientCollection;
-    }
-
-    @XmlTransient
-    public Collection<ProjectManager> getProjectManagerCollection() {
-        return projectManagerCollection;
-    }
-
-    public void setProjectManagerCollection(Collection<ProjectManager> projectManagerCollection) {
-        this.projectManagerCollection = projectManagerCollection;
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 
     @Override

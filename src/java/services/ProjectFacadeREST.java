@@ -146,11 +146,11 @@ public class ProjectFacadeREST {
     
     @PUT 
     @Path("{id}/addContact")
-    @Produces({MediaType.APPLICATION_JSON})
     // retourne 1 si OK sinon 0
     public Integer addContact(@PathParam("id") Integer id, @QueryParam("idContact") Integer idContact){
         // on part du principe qu'il ne peut être QUE admin, client ou team
         try {
+            tx.begin();
             // récupération du projet en param
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
@@ -166,14 +166,20 @@ public class ProjectFacadeREST {
             // création d'un objet project_client
             if(res.getIsClient()){
                 ProjectClient pc = new ProjectClient(p.getIdproject(), res.getIdcontact());
+                em.persist(pc);
+                tx.commit();
                 return 1;
             }
             
             // création d'un objet project_team et d'un object projet_manager + affectation à isAdmin du contact
             else if(res.getIsTeam()){
                 ProjectTeam pt = new ProjectTeam(1, p, res);
-                ProjectManager pm = new ProjectManager(1, res.getIdcontact());
+                ProjectManager pm = new ProjectManager(p, res);
                 res.setIsAdmin(true);
+                em.persist(pt);
+                em.persist(pm);
+                em.persist(res);
+                tx.commit();
                 return 1;
             }
             
@@ -194,35 +200,44 @@ public class ProjectFacadeREST {
     @GET
     @Path("{id}/getTeam")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Contact> getTeam(@PathParam("idproject") Integer idproject) {
+    public List<Contact> getTeam(@PathParam("id") Integer idproject) {
+        Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+        q.setParameter("idparam", idproject);
+        Project project = (Project) q.getSingleResult();
         try {
             // Initialisation de la liste de réponse
             List<Contact> res = null;
             // Recuperation des clients
-            Query q = em.createQuery("select c from Contact c inner join project_client as pc on c.idcontact = pc.idclient where pc.idproject=:idparam");
-            q.setParameter("idparam", idproject);
+            q = em.createQuery("select c from Contact c, ProjectClient pc where pc.contact.idcontact = c.idcontact and pc.project.idproject=:idparam");
+            q.setParameter("idparam", project.getIdproject());
+            // Contact c = (Contact) q.getSingleResult();
             List<Contact> temp = q.getResultList();
-            for(int i = 0; i < temp.size(); i++) {
+            res = temp;
+            /* for(int i = 0; i < temp.size(); i++) {
+                // System.out.println(temp.get(i).toString());
                 res.add(temp.get(i));
-            }
+            } */
             // Recuperation des managers
-            q = em.createQuery("select c from Contact c inner join project_manager as pm on c.idcontact = pm.idmanager where pm.idproject=:idparam");
-            q.setParameter("idparam", idproject);
+            q = em.createQuery("select c from Contact c, ProjectManager pm where pm.contact.idcontact = c.idcontact and pm.project.idproject=:idparam");
+            q.setParameter("idparam", project.getIdproject());
             temp = q.getResultList();
-            for(int i = 0; i < temp.size(); i++) {
+            res.addAll(temp);
+            /* for(int i = 0; i < temp.size() - 1; i++) {
                 res.add(temp.get(i));
-            }
+            } */
             
             // Recuperation des autres
-            q = em.createQuery("select c from Contact c inner join project_team as pt on c.idcontact = pt.idmember where pm.idproject=:idparam");
-            q.setParameter("idparam", idproject);
+            // q = em.createQuery("select c from Contact c inner join ProjectTeam as pt on c.idcontact = pt.idmember where pm.idproject=:idparam");
+            q = em.createQuery("select c from Contact c, ProjectTeam pt where pt.idmember.idcontact = c.idcontact and pt.idproject.idproject=:idparam");
+            q.setParameter("idparam", project.getIdproject());
             temp = q.getResultList();
-            for(int i = 0; i < temp.size(); i++) {
+            res.addAll(temp);
+            /* for(int i = 0; i < temp.size() - 1; i++) {
                 res.add(temp.get(i));
-            }
-            
+            } */
             return res;
         } catch(Exception e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
