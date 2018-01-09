@@ -76,12 +76,12 @@ public class Task implements Serializable {
 
     /**
      * 
-     * @param idtask
+     * @param idSprint
      * @param status 
      * status possibles : 1 - 2 - 3 ou 4 pour "TODO" - "IN PROGRESS" - "DONE" ou "VALIDATED"
      */
-    public Task(Integer idtask, int status) {
-        this.idtask = idtask;
+    public Task(Sprint idSprint, int status) {
+        this.idsprint = idSprint;
         this.status = status;
     }
 

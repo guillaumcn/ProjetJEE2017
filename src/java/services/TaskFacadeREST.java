@@ -6,7 +6,7 @@
 package services;
 
 import entities.Project;
-import entities.Status;
+import entities.Sprint;
 import entities.Task;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -43,24 +43,38 @@ public class TaskFacadeREST {
     // Creation d'une tache
     @PUT
     @Path("create")
-    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("code_status") String code_status) {
-        try {
-            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
-            q.setParameter("idparam", idproject);
-            List index = q.getResultList();
-            if(index.isEmpty()) {
-                return "Project ID's not correct";
-            } else {
-                Query q2 = em.createQuery("select s from Status s where s.codeStatus = \"TODO\"");
-                Object status = q2.getSingleResult();
-                Task t = new Task(1, (Project) index.get(0), code_status, (Status) status);
-                tx.begin();
-                em.persist(t);
-                tx.commit();
-                return "OK";
+    public String create(@QueryParam("idsprint") Integer idsprint, @QueryParam("code_status") String code_status) {
+        if(code_status != "TO DO" || code_status != "IN PROGRESS" || code_status != "DONE" || code_status != "VALIDATED") {
+            return "Code_status invalide";
+        } else {
+            try {
+                Query q = em.createQuery("select s from Sprint s where s.idsprint:idsprint");
+                q.setParameter("idparam", idsprint);
+                Sprint s = (Sprint) q.getResultList();
+                if(s == null) {
+                    return "Sprint ID's not correct";
+                } else {
+                    tx.begin();
+                    Task t = null;
+                    switch(code_status){
+                        case "TO DO":
+                            t = new Task(s, 1);
+                        case "IN PROGRESS":
+                            t = new Task(s, 2);
+                        case "DONE":
+                            t = new Task(s, 3);
+                        case "VALIDATED":
+                            t = new Task(s, 4);
+                    }
+                    em.persist(t);
+                    tx.commit();
+                    return "OK";
+                }
+
+            } catch(Exception e) {
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);
             }
-        } catch(Exception e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+    
         }
     }
     
@@ -116,7 +130,9 @@ public class TaskFacadeREST {
         }
     }
     
+    // A FAIRE - adapter avec la nouvelle bd
     // Change le status d'une tache
+    /*
     @POST
     @Path("{id}/updateStatus")
     public String updateStatus(@PathParam("id") Integer id, @QueryParam("status") String status) {
@@ -153,5 +169,5 @@ public class TaskFacadeREST {
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-    }
+    } */
 }
