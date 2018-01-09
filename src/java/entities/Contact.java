@@ -65,6 +65,13 @@ public class Contact implements Serializable {
         this.login = login;
         this.password = password;
     }
+    
+    public Contact(Integer idcontact, String login, String password, Boolean status) {
+        this.idcontact = idcontact;
+        this.login = login;
+        this.password = password;
+        this.admin = status;
+    }
 
     public Integer getIdcontact() {
         return idcontact;
