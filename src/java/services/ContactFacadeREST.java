@@ -37,8 +37,9 @@ public class ContactFacadeREST {
 
     @PUT
     @Path("create")
+    // exemple de creation (postman en put) : http://localhost:8080/ProjetJEE/webresources/contact/create?login=test&password=test&status=client
     public String create(@QueryParam("login") String login, @QueryParam("password") String password, @QueryParam("status") String status) {
-        // Status : Client, Team ou Admin
+        // Status : Client ou Admin
         // Si on met 1 l'id va s'autoincrement
         try {
             if(status.equals("admin")) {
@@ -64,6 +65,7 @@ public class ContactFacadeREST {
     @GET
     @Path("{id}/get")
     // Le resultat est produit en JSON
+    // exemple d'url (postman en put) :  http://localhost:8080/ProjetJEE/webresources/contact/1/get
     @Produces({MediaType.APPLICATION_JSON})
     public Contact findContact(@PathParam("id") Integer id) {
         try {
@@ -78,6 +80,7 @@ public class ContactFacadeREST {
     
     @POST
     @Path("{id}/update")
+    // http://localhost:8080/ProjetJEE/webresources/contact/1/update?login=toto&password=tata
     public String updateContact(@PathParam("id") Integer id, @QueryParam("login") String login, @QueryParam("password") String password) {
         try {
             tx.begin();
@@ -95,6 +98,7 @@ public class ContactFacadeREST {
     
     @DELETE
     @Path("{id}/delete")
+    // http://localhost:8080/ProjetJEE/webresources/contact/1/delete
     public String deleteContact(@PathParam("id") Integer id) {
         try {
             tx.begin();
@@ -110,6 +114,7 @@ public class ContactFacadeREST {
     
     @GET
     @Path("getAll")
+    // http://localhost:8080/ProjetJEE/webresources/contact/getAll
     // Le resultat est produit en JSON
     @Produces({MediaType.APPLICATION_JSON})
     public List<Contact> findAll() {
@@ -126,7 +131,9 @@ public class ContactFacadeREST {
     @POST
     @Path("{id}/updateState")
     @Produces(MediaType.APPLICATION_JSON)
-    public String updateState(@PathParam("id") Integer idcontact, @QueryParam("state") String newstate) {
+    // http://localhost:8080/ProjetJEE/webresources/contact/1/updateState?state=admin
+    // TODO : renvoie "Unexpected 'E'"
+    public String updateState(@PathParam("id") Integer idcontact, @QueryParam("state") String newstate)  {
         Query q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
         q.setParameter("idparam", idcontact);
         Contact client = (Contact) q.getSingleResult();
@@ -134,15 +141,27 @@ public class ContactFacadeREST {
             tx.begin();
             // On verifie quel etat doit change
             if(newstate == "admin") {
-                if(!client.getAdmin())
+                if(!client.getAdmin()) {
                     client.setAdmin(Boolean.TRUE);
-            } else if(newstate == "client")
+                    em.persist(client);
+                    tx.commit();
+                    return "OK";
+                } else {
+                    return "deja admin";
+                }
+            } else if (newstate == "client") {
                 if(client.getAdmin()) {
                     client.setAdmin(Boolean.FALSE);
-            }
-            em.persist(client);
-            tx.commit();
-            return "OK";
+                    em.persist(client);
+                    tx.commit();
+                    return "OK";
+                } else {
+                    return "deja client / team";
+                } 
+            } else {
+                return "Erreur dans la requete";
+            }    
+            
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
