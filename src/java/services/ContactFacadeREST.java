@@ -139,8 +139,8 @@ public class ContactFacadeREST {
         Contact client = (Contact) q.getSingleResult();
         try {
             tx.begin();
-            // On verifie quel etat doit change
-            if(newstate == "admin") {
+            // On verifie quel etat doit changer
+            if(newstate.equals("admin")) {
                 if(!client.getAdmin()) {
                     client.setAdmin(Boolean.TRUE);
                     em.persist(client);
@@ -149,7 +149,7 @@ public class ContactFacadeREST {
                 } else {
                     return "deja admin";
                 }
-            } else if (newstate == "client") {
+            } else if (newstate.equals("client")) {
                 if(client.getAdmin()) {
                     client.setAdmin(Boolean.FALSE);
                     em.persist(client);
