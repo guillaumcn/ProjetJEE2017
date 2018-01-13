@@ -44,6 +44,7 @@ public class ProjectFacadeREST {
     @PUT
     @Path("create")
     public Integer create(@QueryParam("nom") String nom) {
+        // http://localhost:8080/ProjetJEE/webresources/project/create?nom=testProject
         try {
             Project p = new Project(1, nom);
             tx.begin();

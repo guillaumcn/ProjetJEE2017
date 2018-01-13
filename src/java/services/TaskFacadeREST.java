@@ -41,6 +41,7 @@ public class TaskFacadeREST {
     EntityTransaction tx = em.getTransaction();
     
     // Creation d'une tache
+    // pour tester ca, il faut d'abord créer un sprint pour pouvoir avoir son id
     @PUT
     @Path("create")
     public String create(@QueryParam("idsprint") Integer idsprint, @QueryParam("code_status") String code_status) {
@@ -132,42 +133,46 @@ public class TaskFacadeREST {
     
     // A FAIRE - adapter avec la nouvelle bd
     // Change le status d'une tache
-    /*
+    
+    /**
+     * 
+     * @param id
+     * @param status
+     * @return update le statut d'une task
+     */
     @POST
-    @Path("{id}/updateStatus")
-    public String updateStatus(@PathParam("id") Integer id, @QueryParam("status") String status) {
+    @Path("{id}/updateTaskStatus")
+    public String updateTaskStatus(@PathParam("id") Integer id, @QueryParam("status") String status) {
         try {
             tx.begin();
             // Préparation de la requete pour le changement de status
-            Query statusUpdate = em.createQuery("select s from Status s where s.codeStatus=:status");
-            String s;
+            int s;
             // On check la valeur passer par l'URL
             switch(status) {
                 case "TODO":
-                    s = "TODO";
+                    s = 1;
                     break;
                 case "IN PROGRESS":
-                    s = "IN PROGRESS";
+                    s = 2;
                     break;
                 case "DONE":
-                    s = "DONE";
+                    s = 3;
                     break;
                 case "VALIDATED":
-                    s = "VALIDATED";
+                    s = 4;
                     break;
                 default:
                     return "Mauvais status";
             }
-            statusUpdate.setParameter("status", s);
-            Status newStatus = (Status) statusUpdate.getSingleResult();
+ 
             Query q = em.createQuery("select t from Task t where t.idtask=:idparam");
             q.setParameter("idparam", id);
             Task task = (Task) q.getSingleResult();
-            task.setStatus(newStatus);
+            task.setStatus(s);
             tx.commit();
             return "OK";
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-    } */
+    } 
 }
