@@ -91,12 +91,18 @@ public class ProjectFacadeREST {
     @Path("{id}/delete")
     public String delete(@PathParam("id") Integer id) {
         try {
-            tx.begin();
-            Query q = em.createQuery("delete from Project p where p.idproject=:idparam");
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
-            q.executeUpdate();
-            tx.commit();
-            return "OK";
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
+            } else {
+                tx.begin();
+                q = em.createQuery("delete from Project p where p.idproject=:idparam");
+                q.setParameter("idparam", id);
+                q.executeUpdate();
+                tx.commit();
+                return "OK";
+            }
         } catch(Exception e) {
             System.out.println(e.getMessage());
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -111,8 +117,12 @@ public class ProjectFacadeREST {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
-            Project p = (Project) q.getSingleResult();
-            return p;
+            if(q.getResultList().isEmpty()) {
+                throw new Exception("Le project n'existe pas / ID inconnu");
+            } else {
+                Project p = (Project) q.getSingleResult();
+                return p;
+            }
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
@@ -237,26 +247,31 @@ public class ProjectFacadeREST {
     public String addContact(@PathParam("id") Integer id, @QueryParam("idContact") Integer idContact) {
         // on part du principe qu'il ne peut être QUE admin, client ou team
         try {
-            tx.begin();
             // récupération du projet en param
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
-            Query q2 = em.createQuery("select c from Contact c where c.idcontact=:idparam2");
             q.setParameter("idparam", id);
-            q2.setParameter("idparam2", idContact);
-            Project p = (Project) q.getSingleResult();
-            List<Contact> c = q2.getResultList();
-            if(c.isEmpty()) {
-                return "ID Contact inconnu";
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
             } else {
-                if(!p.checkContact(idContact)) {
-                    p.setContacts(idContact);
-                    em.persist(p);
-                    tx.commit();
-                    return "OK";
+                Project p = (Project) q.getSingleResult();
+                q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
+                q.setParameter("idparam", idContact);
+                List<Contact> c = q.getResultList();
+                if(c.isEmpty()) {
+                    return "ID Contact inconnu";
                 } else {
-                    return "OK";
+                    if(!p.checkContact(idContact)) {
+                        tx.begin();
+                        p.setContacts(idContact);
+                        em.persist(p);
+                        tx.commit();
+                        return "OK";
+                    } else {
+                        return "OK";
+                    }
                 }
             }
+            
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
@@ -302,19 +317,24 @@ public class ProjectFacadeREST {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", idproject);
-            Project p = (Project) q.getSingleResult();
-            String contacts = p.getContacts().substring(1);
-            String contact_temp = contacts.substring(0, contacts.length() - 1);
-            String[] list_contact = contact_temp.split(",");
-            List<Contact> res = new ArrayList<>();
-            for(int i = 0; i < list_contact.length; i++) {
-                int id = Integer.parseInt(list_contact[i]);
-                q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
-                q.setParameter("idparam", id);
-                Contact c = (Contact) q.getSingleResult();
-                res.add(c);
+            if(q.getResultList().isEmpty()) {
+                throw new Exception("Le projet n'existe pas / ID inconnu");
+            } else {
+                Project p = (Project) q.getSingleResult();
+                String contacts = p.getContacts().substring(1);
+                String contact_temp = contacts.substring(0, contacts.length() - 1);
+                String[] list_contact = contact_temp.split(",");
+                List<Contact> res = new ArrayList<>();
+                for(int i = 0; i < list_contact.length; i++) {
+                    int id = Integer.parseInt(list_contact[i]);
+                    q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
+                    q.setParameter("idparam", id);
+                    Contact c = (Contact) q.getSingleResult();
+                    res.add(c);
+                }
+                return res;
             }
-            return res;
+            
         } catch(Exception e) {
             // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
