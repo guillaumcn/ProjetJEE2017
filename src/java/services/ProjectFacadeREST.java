@@ -121,13 +121,21 @@ public class ProjectFacadeREST {
     // Met a jour le projet
     // A modifier
     @POST
-    @Path("{id}/update") 
-    public Project updateProject(@PathParam("id") Integer id, @QueryParam("code") String code) {
+    @Path("{id}/updateName") 
+    public String updateProjectName(@PathParam("id") Integer id, @QueryParam("name") String name) {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
-            Project p = (Project) q.getSingleResult();
-            return p;
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
+            } else {
+                Project p = (Project) q.getSingleResult();
+                tx.begin();
+                p.setNom(name);
+                em.persist(p);
+                tx.commit();
+                return "OK";
+            }
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
@@ -140,15 +148,71 @@ public class ProjectFacadeREST {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", id);
-            Project p = (Project) q.getSingleResult();
-            
-            if(date.matches("^2[0-9]{3,}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])")) {
-                System.out.println("coucou");
-                
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
+            } else {
+               Project p = (Project) q.getSingleResult();
+                if(date.matches("^2[0-9]{3,}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])")) {
+                    tx.begin();
+                    p.setStartDate(new Date(date));
+                    em.persist(p);
+                    tx.commit();
+                    return "OK";
+                } else {
+                    return "Format date incorrect : AAAA/MM/JJ"; 
+                } 
             }
-            return null;
         } catch(Exception e) {
             // e.printStackTrace();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    // Met a jour la date de fin de projet
+    @POST
+    @Path("{id}/updateEndDate")
+    public String updateEndDate(@PathParam("id") Integer id, @QueryParam("enddate") String date) {
+        try {
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", id);
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
+            } else {
+               Project p = (Project) q.getSingleResult();
+                if(date.matches("^2[0-9]{3,}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])")) {
+                    tx.begin();
+                    p.setEndDate(new Date(date));
+                    em.persist(p);
+                    tx.commit();
+                    return "OK";
+                } else {
+                    return "Format date incorrect : AAAA/MM/JJ"; 
+                } 
+            }
+        } catch(Exception e) {
+            // e.printStackTrace();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    // Modifie la description
+    @POST
+    @Path("{id}/updateDescription")
+    public String updateDesc(@PathParam("id") Integer idproject, @QueryParam("desc") String desc) {
+        try {
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            if(q.getResultList().isEmpty()) {
+                return "Le project n'existe pas / ID inconnu";
+            } else {
+                Project p = (Project) q.getSingleResult();
+                tx.begin();
+                p.setDescription(desc);
+                em.persist(p);
+                tx.commit();
+                return "OK";
+            }
+        } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -194,6 +258,38 @@ public class ProjectFacadeREST {
                 }
             }
         } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    // Supprime un utilisateur du projet
+    @DELETE
+    @Path("{id}/removeContact")
+    public String removeContact(@PathParam("id") Integer idproject, @QueryParam("idcontact") Integer idcontact) {
+        try {
+            Query q = em.createQuery("select p from Project p where p.idproject=:id");
+            q.setParameter("id", idproject);
+            if(q.getResultList().isEmpty()) {
+                return "Le projet n'existe pas / ID inconnu";
+            } else {
+                Project p = (Project) q.getSingleResult();
+                q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
+                q.setParameter("idparam", idcontact);
+                if(q.getResultList().isEmpty()) {
+                    return "ID Contact inconnu";
+                } else {
+                    if(!p.checkContact(idcontact)) {
+                        return "Le contact ne fait pas partie du projet";
+                    } else {
+                        tx.begin();
+                        p.removeContact(idcontact);
+                        em.persist(p);
+                        tx.commit();
+                        return "OK";
+                    }
+                }
+            }
+        } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }

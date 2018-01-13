@@ -145,6 +145,21 @@ public class Project implements Serializable {
         
         return false;
     }
+    
+    // Retire un utilisateur de la liste
+    public void removeContact(Integer contact) {
+        String temp = this.contacts.substring(1);
+        String temp2 = temp.substring(0, temp.length() - 1);
+        String[] ids = temp2.split(",");
+        String contacts = "[";
+        for(int i = 0; i < ids.length; i++) {
+            if(contact != Integer.parseInt(ids[i])) {
+                contacts += ids[i] + ",";
+            }
+        }
+        contacts += "]";
+        this.contacts = contacts;
+    }
 
     public Date getStartDate() {
         return startDate;
