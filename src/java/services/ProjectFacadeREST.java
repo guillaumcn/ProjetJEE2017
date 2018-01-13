@@ -51,7 +51,7 @@ public class ProjectFacadeREST {
             tx.commit();
             return p.getIdproject();
         } catch(Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -105,7 +105,7 @@ public class ProjectFacadeREST {
     // Retourne les informations d'un projet
     @GET
     @Path("{id}/get")
-    @Produces({MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_JSON})
     public Project findProject(@PathParam("id") Integer id) {
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
@@ -132,15 +132,36 @@ public class ProjectFacadeREST {
         }
     }
     
+    // Met a jour la date de debut de projet
+    @POST
+    @Path("{id}/updateStartDate")
+    public String updateStartDate(@PathParam("id") Integer id, @QueryParam("startdate") String date) {
+        try {
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", id);
+            Project p = (Project) q.getSingleResult();
+            
+            if(date.matches("^2[0-9]{3,}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])")) {
+                System.out.println("coucou");
+                
+            }
+            return null;
+        } catch(Exception e) {
+            // e.printStackTrace();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
     // Retourne tous les projets
     @GET
     @Path("getAll")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Project> getAll() {
+    // @Produces({MediaType.APPLICATION_JSON})
+    public List<Project> findAll() {
         try {
             Query q = em.createQuery("select p from Project p");
             return q.getResultList();
         } catch(Exception e) {
+            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -162,10 +183,14 @@ public class ProjectFacadeREST {
             if(c.isEmpty()) {
                 return "ID Contact inconnu";
             } else {
-                p.setContacts(idContact);
-                em.persist(p);
-                tx.commit();
-                return "OK";
+                if(!p.checkContact(idContact)) {
+                    p.setContacts(idContact);
+                    em.persist(p);
+                    tx.commit();
+                    return "OK";
+                } else {
+                    return "OK";
+                }
             }
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -184,7 +209,7 @@ public class ProjectFacadeREST {
             String contacts = p.getContacts().substring(1);
             String contact_temp = contacts.substring(0, contacts.length() - 1);
             String[] list_contact = contact_temp.split(",");
-            List<Contact> res = new ArrayList<Contact>();
+            List<Contact> res = new ArrayList<>();
             for(int i = 0; i < list_contact.length; i++) {
                 int id = Integer.parseInt(list_contact[i]);
                 q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
@@ -194,7 +219,7 @@ public class ProjectFacadeREST {
             }
             return res;
         } catch(Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     } 

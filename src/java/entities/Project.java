@@ -130,6 +130,21 @@ public class Project implements Serializable {
         temp2 += contacts + ",";
         this.contacts = "[" + temp2 + "]";
     }
+    
+    // Méthode vérifiant si l'ID Contact fait déjà partie de la liste
+    public boolean checkContact(Integer contact) {
+        String temp = this.contacts.substring(1);
+        String temp2 = temp.substring(0, temp.length() - 1);
+        String[] ids = temp2.split(",");
+        
+        for(int i = 0; i < ids.length; i++) {
+            if(contact == Integer.parseInt(ids[i])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     public Date getStartDate() {
         return startDate;
