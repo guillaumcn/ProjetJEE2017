@@ -71,12 +71,11 @@ public class ReleaseFacadeREST {
     // @Produces({MediaType.APPLICATION_JSON})
     // http://localhost:8080/ProjetJEE/webresources/release/1/get
     public ReleaseProject getRelease(@PathParam("id") Integer id) {
-        System.out.println("id oui : " + id);
         try{
             Query q = em.createQuery("select r from ReleaseProject r where r.idrelease=:idr");
             q.setParameter("idr", id);
-            System.out.println("release trouvée " + q);
-            return (ReleaseProject) q.getSingleResult();
+            ReleaseProject rp = (ReleaseProject) q.getSingleResult();
+            return rp;
         } catch(Exception e) {
             System.out.println("caca");
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -84,7 +83,14 @@ public class ReleaseFacadeREST {
         
     }
     
+    @GET
+    @Path("getAll")
+    // @Produces({MediaType.APPLICATION_JSON})
+    // http://localhost:8080/ProjetJEE/webresources/release/getAll
+    public List<ReleaseProject> getAll() {
+        Query q = em.createQuery("select r from ReleaseProject r");
+        return q.getResultList();
+    }
+    
+    
    }
-    
-    
-
