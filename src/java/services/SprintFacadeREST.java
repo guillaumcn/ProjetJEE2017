@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
  * @author Nicolas
  */
 @Stateless
-@Path("service")
+@Path("sprint")
 public class SprintFacadeREST {
     
     private EntityManager em = Persistence.createEntityManagerFactory("ProjetJEEPU").createEntityManager();
@@ -45,7 +45,7 @@ public class SprintFacadeREST {
                 ReleaseProject r = (ReleaseProject) q.getSingleResult();
                 tx.begin();
                 Sprint s = new Sprint(1, desc, r);
-                em.persist(r);
+                em.persist(s);
                 tx.commit();
                 return "OK";
             }

@@ -6,6 +6,8 @@
 package services;
 
 import entities.Project;
+import entities.ReleaseProject;
+import entities.Sprint;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -339,5 +341,50 @@ public class ProjectFacadeREST {
             // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-    } 
+    }
+    
+    // Recuperation des release associes au projet
+    @GET
+    @Path("{id}/getRelease")
+    public List<ReleaseProject> getRelease(@PathParam("id") Integer idproject) {
+        try  {
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            if(q.getResultList().isEmpty()) {
+                throw new Exception("Le projet n'existe pas / ID inconnu");
+            } else {
+                q = em.createQuery("select r from ReleaseProject r where r.idproject=:idparam");
+                q.setParameter("idparam", idproject);
+                return q.getResultList();
+            }
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    // Recupere les sprint associes au projet
+    @GET
+    @Path("{id}/getSprint")
+    public List<Sprint> getSprint(@PathParam("id") Integer idproject) {
+        try {
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            if(q.getResultList().isEmpty()) {
+                throw new Exception("Le projet n'existe pas / ID inconnu");
+            } else {
+                q = em.createQuery("select r from ReleaseProject r where r.idproject=:idparam");
+                q.setParameter("idparam", idproject);
+                List<ReleaseProject> r = q.getResultList();
+                List<Sprint> s = null;
+                for(ReleaseProject rp : r) {
+                    q = em.createQuery("select s from Sprint s where s.idrelease=:idparam");
+                    q.setParameter("idparam", rp.getIdrelease());
+                    s.addAll(q.getResultList());
+                }
+                return s;
+            }
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
 }
