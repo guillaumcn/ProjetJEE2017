@@ -353,11 +353,13 @@ public class ProjectFacadeREST {
             if(q.getResultList().isEmpty()) {
                 throw new Exception("Le projet n'existe pas / ID inconnu");
             } else {
+                Project p = (Project) q.getSingleResult();
                 q = em.createQuery("select r from ReleaseProject r where r.idproject=:idparam");
-                q.setParameter("idparam", idproject);
+                q.setParameter("idparam", p);
                 return q.getResultList();
             }
         } catch(Exception e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -372,18 +374,20 @@ public class ProjectFacadeREST {
             if(q.getResultList().isEmpty()) {
                 throw new Exception("Le projet n'existe pas / ID inconnu");
             } else {
+                Project p = (Project) q.getSingleResult();
                 q = em.createQuery("select r from ReleaseProject r where r.idproject=:idparam");
-                q.setParameter("idparam", idproject);
+                q.setParameter("idparam", p);
                 List<ReleaseProject> r = q.getResultList();
-                List<Sprint> s = null;
+                List<Sprint> s = new ArrayList();
                 for(ReleaseProject rp : r) {
                     q = em.createQuery("select s from Sprint s where s.idrelease=:idparam");
-                    q.setParameter("idparam", rp.getIdrelease());
+                    q.setParameter("idparam", rp);
                     s.addAll(q.getResultList());
                 }
                 return s;
             }
         } catch(Exception e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
