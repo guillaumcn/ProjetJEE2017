@@ -117,6 +117,7 @@ public class SprintFacadeREST {
             } else {
                 tx.begin();
                 q = em.createQuery("delete from Sprint s where s.idsprint=:idparam");
+                q.setParameter("idparam", idsprint);
                 q.executeUpdate();
                 tx.commit();
                 return "OK";
