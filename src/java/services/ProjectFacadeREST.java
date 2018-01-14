@@ -43,14 +43,14 @@ public class ProjectFacadeREST {
     // Creation d'un projet
     @PUT
     @Path("create")
-    public Integer create(@QueryParam("nom") String nom) {
+    public String create(@QueryParam("nom") String nom) {
         // http://localhost:8080/ProjetJEE/webresources/project/create?nom=testProject
         try {
             Project p = new Project(1, nom);
             tx.begin();
             em.persist(p);
             tx.commit();
-            return p.getIdproject();
+            return "OK";
         } catch(Exception e) {
             // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -60,13 +60,13 @@ public class ProjectFacadeREST {
     // Creation d'un projet avec description
     @PUT
     @Path("createWithDesc")
-    public Integer create(@QueryParam("code") String code, @QueryParam("description") String desc) {
+    public String create(@QueryParam("code") String code, @QueryParam("description") String desc) {
         try {
             Project p = new Project(1, code, desc);
             tx.begin();
             em.persist(p);
             tx.commit();
-            return p.getIdproject();
+            return "OK";
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
@@ -74,13 +74,13 @@ public class ProjectFacadeREST {
     
     @PUT
     @Path("createWithDescStartDate")
-    public Integer create(@QueryParam("code") String code, @QueryParam("description") String desc, @QueryParam("startDate") String start) {
+    public String create(@QueryParam("code") String code, @QueryParam("description") String desc, @QueryParam("startDate") String start) {
         try {
             Project p = new Project(1, code, desc, start);
             tx.begin();
             em.persist(p);
             tx.commit();
-            return p.getIdproject();
+            return "OK";
         } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }

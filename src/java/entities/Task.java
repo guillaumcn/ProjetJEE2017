@@ -8,6 +8,7 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -64,7 +65,7 @@ public class Task implements Serializable {
     @Column(name = "status")
     private int status;
     @JoinColumn(name = "idsprint", referencedColumnName = "idsprint")
-    @OneToOne(optional = false)
+    @OneToOne(cascade=REMOVE, optional = false)
     private Sprint idsprint;
 
     public Task() {

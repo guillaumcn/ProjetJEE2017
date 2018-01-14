@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +58,7 @@ public class ReleaseProject implements Serializable {
     @Column(name = "version")
     private String version;
     @JoinColumn(name = "idproject", referencedColumnName = "idproject")
-    @OneToOne(optional = false)
+    @OneToOne(cascade=REMOVE, optional = false)
     private Project idproject;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idrelease")
     private Collection<Sprint> sprintCollection;
