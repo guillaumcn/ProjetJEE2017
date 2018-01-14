@@ -69,9 +69,9 @@ public class ReleaseProject implements Serializable {
         this.idrelease = idrelease;
     }
 
-    public ReleaseProject(Integer idrelease, String version) {
-        this.idrelease = idrelease;
-        this.version = version;
+    public ReleaseProject(Project idProject, Date dateRelease) {
+        this.idproject = idProject;
+        this.daterelease = dateRelease;
     }
     
     /**
