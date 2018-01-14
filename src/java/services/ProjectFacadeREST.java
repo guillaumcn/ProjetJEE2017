@@ -8,6 +8,7 @@ package services;
 import entities.Project;
 import entities.ReleaseProject;
 import entities.Sprint;
+import entities.Task;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -386,6 +387,65 @@ public class ProjectFacadeREST {
             }
         } catch(Exception e) {
             e.printStackTrace();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    // Recuperation des taches
+    @GET
+    @Path("{id}/getTasksWithStatus")
+    public List<Task> getTasks(@PathParam("id") Integer idproject, @QueryParam("status") String status) {
+        try {
+            int stat;
+            switch(status) {
+                case "TO DO":
+                    stat = 1;
+                    break;
+                case "IN PROGRESS":
+                    stat = 2;
+                    break;
+                case "DONE":
+                    stat = 3;
+                    break;
+                case "VALIDATED":
+                    stat = 4;
+                    break;
+                case "ALL":
+                    stat = 5;
+                    break;
+                default:
+                    throw new Exception("Mauvais status");
+            }
+            Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
+            q.setParameter("idparam", idproject);
+            if(q.getResultList().isEmpty()) {
+                throw new Exception("Le projet n'existe pas / ID inconnu");
+            } else {
+                Project p = (Project) q.getSingleResult();
+                q = em.createQuery("select r from ReleaseProject r where r.idproject=:idparam");
+                q.setParameter("idparam", p);
+                List<ReleaseProject> rp = q.getResultList();
+                List<Task> tasks = new ArrayList();
+                for(ReleaseProject temp : rp) {
+                    q = em.createQuery("select s from Sprint s where s.idrelease=:idparam");
+                    q.setParameter("idparam", temp);
+                    List<Sprint> s = q.getResultList();
+                    for(Sprint temps : s) {
+                        if(stat == 5) {
+                           q = em.createQuery("select t from Task t where t.idsprint=:sprintparam");
+                           q.setParameter("sprintparam", temps);
+                           tasks.addAll(q.getResultList());
+                        } else {
+                           q = em.createQuery("select t from Task t where t.idsprint=:sprint and t.status=:status");
+                           q.setParameter("sprint", temps);
+                           q.setParameter("status", stat);
+                           tasks.addAll(q.getResultList());
+                        }
+                    }
+                }
+                return tasks;
+            }
+        } catch(Exception e) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
