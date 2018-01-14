@@ -96,4 +96,29 @@ public class ReleaseFacadeREST {
             return null;
         }
     }
+    
+    @POST
+    @Path("update")
+    // http://localhost:8080/ProjetJEE/webresources/release/1/update?date=2018/02/10
+    public String updateRelease(@PathParam("id") Integer idRelease, @QueryParam("date") String newDate){
+        System.out.println("updateRelease()");
+        try {
+            Query q = em.createQuery("select r from ReleaseProject r where r.idrelease=:id");
+            q.setParameter("id", idRelease);
+            ReleaseProject rp = (ReleaseProject) q.getSingleResult();
+            if(rp != null){
+                tx.begin();
+                rp.setDaterelease(new Date(newDate));
+                em.persist(rp);
+                tx.commit();
+                return "Release mise à jour";
+            } else {
+                return "La release correspondant à l'id : [" + idRelease + "] n'a pas pu être trouvée";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Erreur lors de l'update";
+        }
+    }
+    
    }
