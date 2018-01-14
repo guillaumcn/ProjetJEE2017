@@ -45,13 +45,13 @@ public class TaskFacadeREST {
     @PUT
     @Path("create")
     public String create(@QueryParam("idsprint") Integer idsprint, @QueryParam("code_status") String code_status) {
-        if(code_status != "TO DO" || code_status != "IN PROGRESS" || code_status != "DONE" || code_status != "VALIDATED") {
+        if(!code_status.equals("TO DO") && !code_status.equals("IN PROGRESS") && !code_status.equals("DONE") && !code_status.equals("VALIDATED")) {
             return "Code_status invalide";
         } else {
             try {
-                Query q = em.createQuery("select s from Sprint s where s.idsprint:idsprint");
-                q.setParameter("idparam", idsprint);
-                Sprint s = (Sprint) q.getResultList();
+                Query q = em.createQuery("select s from Sprint s where s.idsprint=:idsprint");
+                q.setParameter("idsprint", idsprint);
+                Sprint s = (Sprint) q.getSingleResult();
                 if(s == null) {
                     return "Sprint ID's not correct";
                 } else {
@@ -84,8 +84,12 @@ public class TaskFacadeREST {
     @Path("getAll")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Task> getAll() {
-        Query q = em.createQuery("select t from Task t");
-        return q.getResultList();
+        try {
+            Query q = em.createQuery("select t from Task t");
+            return q.getResultList(); 
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
     }
     
     // Retourne les informations d'une tache
