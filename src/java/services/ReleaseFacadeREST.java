@@ -121,4 +121,25 @@ public class ReleaseFacadeREST {
         }
     }
     
-   }
+    @DELETE
+    @Path("{id}/delete")
+    public String delete(@PathParam("id") Integer idrelease) {
+        try {
+            Query q = em.createQuery("select r from ReleaseProject r where r.idrelease=:idparam");
+            q.setParameter("idparam", idrelease);
+            if(q.getResultList().isEmpty()) {
+                return "La release n'existe pas / ID inconnu";
+            } else {
+                tx.begin();
+                q = em.createQuery("delete from ReleaseProject r where r.idrelease=:idparam");
+                q.setParameter("idparam",idrelease);
+                q.executeUpdate();
+                tx.commit();
+                return "OK";
+            }
+        } catch(Exception e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+}
