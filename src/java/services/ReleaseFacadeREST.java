@@ -7,6 +7,7 @@ package services;
 
 import entities.ReleaseProject;
 import entities.Project;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,13 +40,16 @@ public class ReleaseFacadeREST {
     EntityTransaction tx = em.getTransaction();
     
     // Creation d'une release
-    @GET
+    @PUT
     @Path("create")
-    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("daterelease") String daterelease) {
+    // http://localhost:8080/ProjetJEE/webresources/release/create?idproject=1&daterelease=2018/01/03
+    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("daterelease") Date daterelease) {
+        System.out.println("idproject entré : " + idproject + " - daterelease : " + daterelease);
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
             q.setParameter("idparam", idproject);
-            Project p = (Project) q.getResultList();
+            Project p = (Project) q.getSingleResult();
+            System.out.println("Projet trouvé : " + p);
             if(p == null) {
                 System.out.println("p : " + p);
                 return "Id Project non valide";
@@ -61,4 +65,26 @@ public class ReleaseFacadeREST {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
-}
+    
+    @GET
+    @Path("{id}/get")
+    // @Produces({MediaType.APPLICATION_JSON})
+    // http://localhost:8080/ProjetJEE/webresources/release/1/get
+    public ReleaseProject getRelease(@PathParam("id") Integer id) {
+        System.out.println("id oui : " + id);
+        try{
+            Query q = em.createQuery("select r from ReleaseProject r where r.idrelease=:idr");
+            q.setParameter("idr", id);
+            System.out.println("release trouvée " + q);
+            return (ReleaseProject) q.getSingleResult();
+        } catch(Exception e) {
+            System.out.println("caca");
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+        
+    }
+    
+   }
+    
+    
+
