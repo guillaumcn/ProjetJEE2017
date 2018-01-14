@@ -32,7 +32,7 @@ public class ApplicationConfig extends Application {
         resources.add(services.ContactFacadeREST.class);
         resources.add(services.ProjectFacadeREST.class);
         resources.add(services.ReleaseFacadeREST.class);
-        resources.add(services.ServiceFacadeREST.class);
+        resources.add(services.SprintFacadeREST.class);
         resources.add(services.TaskFacadeREST.class);
     }
     

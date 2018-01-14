@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
  */
 @Stateless
 @Path("service")
-public class ServiceFacadeREST {
+public class SprintFacadeREST {
     
     private EntityManager em = Persistence.createEntityManagerFactory("ProjetJEEPU").createEntityManager();
     EntityTransaction tx = em.getTransaction();
