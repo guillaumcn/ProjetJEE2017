@@ -53,7 +53,6 @@ public class ProjectFacadeREST {
             tx.commit();
             return "OK";
         } catch(Exception e) {
-            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -105,7 +104,6 @@ public class ProjectFacadeREST {
                 return "OK";
             }
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -174,7 +172,6 @@ public class ProjectFacadeREST {
                 } 
             }
         } catch(Exception e) {
-            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -201,7 +198,6 @@ public class ProjectFacadeREST {
                 } 
             }
         } catch(Exception e) {
-            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -237,7 +233,6 @@ public class ProjectFacadeREST {
             Query q = em.createQuery("select p from Project p");
             return q.getResultList();
         } catch(Exception e) {
-            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -337,7 +332,6 @@ public class ProjectFacadeREST {
             }
             
         } catch(Exception e) {
-            // e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -358,7 +352,6 @@ public class ProjectFacadeREST {
                 return q.getResultList();
             }
         } catch(Exception e) {
-            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -386,7 +379,6 @@ public class ProjectFacadeREST {
                 return s;
             }
         } catch(Exception e) {
-            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }

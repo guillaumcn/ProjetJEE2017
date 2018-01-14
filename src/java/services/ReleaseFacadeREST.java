@@ -61,7 +61,6 @@ public class ReleaseFacadeREST {
                 return "OK";
             }
         } catch(Exception e) {
-            e.printStackTrace();
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -77,7 +76,6 @@ public class ReleaseFacadeREST {
             ReleaseProject rp = (ReleaseProject) q.getSingleResult();
             return rp;
         } catch(Exception e) {
-            System.out.println("caca");
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
         
@@ -92,7 +90,6 @@ public class ReleaseFacadeREST {
             Query q = em.createQuery("select r from ReleaseProject r");
             return q.getResultList();
         } catch(Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -116,7 +113,6 @@ public class ReleaseFacadeREST {
                 return "La release correspondant à l'id : [" + idRelease + "] n'a pas pu être trouvée";
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return "Erreur lors de l'update";
         }
     }

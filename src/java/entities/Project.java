@@ -134,14 +134,16 @@ public class Project implements Serializable {
         String temp = this.contacts.substring(1);
         String temp2 = temp.substring(0, temp.length() - 1);
         String[] ids = temp2.split(",");
-        
-        for(int i = 0; i < ids.length; i++) {
-            if(contact == Integer.parseInt(ids[i])) {
-                return true;
+        if(!ids[0].equals("")) {
+            for(int i = 0; i < ids.length; i++) {
+                if(contact == Integer.parseInt(ids[i])) {
+                    return true;
+                }
             }
+            return false;
+        } else {
+            return false;
         }
-        
-        return false;
     }
     
     // Retire un utilisateur de la liste

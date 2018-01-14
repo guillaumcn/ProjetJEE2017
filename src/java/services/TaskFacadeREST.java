@@ -57,12 +57,18 @@ public class TaskFacadeREST {
                     switch(code_status){
                         case "TO DO":
                             t = new Task(s, 1);
+                            break;
                         case "IN PROGRESS":
                             t = new Task(s, 2);
+                            break;
                         case "DONE":
                             t = new Task(s, 3);
+                            break;
                         case "VALIDATED":
                             t = new Task(s, 4);
+                            break;
+                        default:
+                            return "Mauvais status";
                     }
                     em.persist(t);
                     tx.commit();
@@ -72,7 +78,6 @@ public class TaskFacadeREST {
             } catch(Exception e) {
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);
             }
-    
         }
     }
     

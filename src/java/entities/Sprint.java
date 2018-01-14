@@ -45,8 +45,6 @@ public class Sprint implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idsprint")
-    private Task task;
     @JoinColumn(name = "idrelease", referencedColumnName = "idrelease")
     @ManyToOne(cascade=REMOVE, optional = false)
     private ReleaseProject idrelease;
@@ -78,14 +76,6 @@ public class Sprint implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
     }
 
     public ReleaseProject getIdrelease() {
