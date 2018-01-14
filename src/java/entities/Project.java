@@ -64,8 +64,6 @@ public class Project implements Serializable {
     @Column(name = "endDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idproject")
-    private ReleaseProject releaseProject;
 
     public Project() {
     }
@@ -175,14 +173,6 @@ public class Project implements Serializable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public ReleaseProject getReleaseProject() {
-        return releaseProject;
-    }
-
-    public void setReleaseProject(ReleaseProject releaseProject) {
-        this.releaseProject = releaseProject;
     }
 
     @Override

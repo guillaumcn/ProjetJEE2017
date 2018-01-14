@@ -88,9 +88,12 @@ public class ReleaseFacadeREST {
     // @Produces({MediaType.APPLICATION_JSON})
     // http://localhost:8080/ProjetJEE/webresources/release/getAll
     public List<ReleaseProject> getAll() {
-        Query q = em.createQuery("select r from ReleaseProject r");
-        return q.getResultList();
+        try {
+            Query q = em.createQuery("select r from ReleaseProject r");
+            return q.getResultList();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    
-    
    }
