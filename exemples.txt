@@ -1,0 +1,49 @@
+Important : IDs des url potentiellement à modifier en fonction des ID que crée la base de données MySQL
+
+Tests avec Postman
+
+Projets
+
+http://localhost:8080/ProjetJEE/webresources/project/create?nom=testProject
+http://localhost:8080/ProjetJEE/webresources/project/createWithDesc?code=codetest&description=testDesc
+http://localhost:8080/ProjetJEE/webresources/project/createWithDesc?code=codetest3&description=testDesc2&startDate=2018/03/12
+http://localhost:8080/ProjetJEE/webresources/project/1/delete
+http://localhost:8080/ProjetJEE/webresources/project/2/get
+http://localhost:8080/ProjetJEE/webresources/project/2/updateName?id=2&name=newName
+http://localhost:8080/ProjetJEE/webresources/project/3/updateStartDate?startdate=2019/01/01
+http://localhost:8080/ProjetJEE/webresources/project/3/updateEndDate?enddate=2019/01/01
+http://localhost:8080/ProjetJEE/webresources/project/3/updateDescription?desc=nouvelle description
+http://localhost:8080/ProjetJEE/webresources/project/getAll
+// obligé de créer un contact pour les méthodes d’après
+http://localhost:8080/ProjetJEE/webresources/contact/create?login=teste&password=test&status=client
+http://localhost:8080/ProjetJEE/webresources/project/2/addContact?idContact=1
+http://localhost:8080/ProjetJEE/webresources/project/2/removeContact?idcontact=1
+http://localhost:8080/ProjetJEE/webresources/project/2/addContact?idContact=1
+http://localhost:8080/ProjetJEE/webresources/project/3/getTeam
+http://localhost:8080/ProjetJEE/webresources/release/create?idproject=2&daterelease=2018/01/03
+http://localhost:8080/ProjetJEE/webresources/project/2/getRelease
+http://localhost:8080/ProjetJEE/webresources/sprint/create?description=testdesc&idrelease=1
+http://localhost:8080/ProjetJEE/webresources/project/2/getSprint
+http://localhost:8080/ProjetJEE/webresources/task/create?idsprint=1&code_status=TO DO
+http://localhost:8080/ProjetJEE/webresources/project/2/getTasksWithStatus?status=TO DO
+
+
+Contacts
+
+
+http://localhost:8080/ProjetJEE/webresources/contact/1/get
+http://localhost:8080/ProjetJEE/webresources/contact/1/update?login=toto&password=tata
+http://localhost:8080/ProjetJEE/webresources/contact/1/updateLogin?login=testUserUpdate
+http://localhost:8080/ProjetJEE/webresources/contact/1/updatePassword?password=testUpdatePass
+http://localhost:8080/ProjetJEE/webresources/contact/1/delete
+http://localhost:8080/ProjetJEE/webresources/contact/create?login=teste&password=test&status=client
+http://localhost:8080/ProjetJEE/webresources/contact/2/updateState?state=admin
+
+
+Releases
+
+http://localhost:8080/ProjetJEE/webresources/release/create?idproject=2&daterelease=2018/01/03
+http://localhost:8080/ProjetJEE/webresources/release/1/get
+http://localhost:8080/ProjetJEE/webresources/release/getAll
+http://localhost:8080/ProjetJEE/webresources/release/1/update?date=2018/02/10
+http://localhost:8080/ProjetJEE/webresources/release/1/delete
