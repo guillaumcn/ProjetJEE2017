@@ -43,7 +43,7 @@ public class ReleaseFacadeREST {
     @PUT
     @Path("create")
     // http://localhost:8080/ProjetJEE/webresources/release/create?idproject=1&daterelease=2018/01/03
-    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("daterelease") Date daterelease) {
+    public String create(@QueryParam("idproject") Integer idproject, @QueryParam("daterelease") String daterelease) {
         System.out.println("idproject entré : " + idproject + " - daterelease : " + daterelease);
         try {
             Query q = em.createQuery("select p from Project p where p.idproject=:idparam");
@@ -54,7 +54,7 @@ public class ReleaseFacadeREST {
                 System.out.println("p : " + p);
                 return "Id Project non valide";
             } else {
-                ReleaseProject release = new ReleaseProject(p, daterelease);
+                ReleaseProject release = new ReleaseProject(p, new Date(daterelease));
                 tx.begin();
                 em.persist(release);
                 tx.commit();
