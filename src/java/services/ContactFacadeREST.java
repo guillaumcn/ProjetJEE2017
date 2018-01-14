@@ -81,7 +81,7 @@ public class ContactFacadeREST {
     @Path("{id}/get")
     // Le resultat est produit en JSON
     // exemple d'url (postman en put) :  http://localhost:8080/ProjetJEE/webresources/contact/1/get
-    @Produces({MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_JSON})
     public Contact findContact(@PathParam("id") Integer id) {
         try {
             Query q = em.createQuery("select c from Contact c where c.idcontact=:idparam");
@@ -185,7 +185,7 @@ public class ContactFacadeREST {
     @Path("getAll")
     // http://localhost:8080/ProjetJEE/webresources/contact/getAll
     // Le resultat est produit en JSON
-    @Produces({MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_JSON})
     public List<Contact> findAll() {
         try {
             Query q = em.createQuery("select c from Contact c");
