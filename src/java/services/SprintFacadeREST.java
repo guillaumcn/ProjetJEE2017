@@ -64,6 +64,7 @@ public class SprintFacadeREST {
             if(q.getResultList().isEmpty()) {
                 return "Le sprint n'existe pas / ID inconnu";
             } else {
+                Sprint s = (Sprint) q.getSingleResult();
                 q = em.createQuery("select r from ReleaseProject r where r.idrelease=:idparam");
                 q.setParameter("idparam", idrelease);
                 if(q.getResultList().isEmpty()) {
@@ -71,7 +72,6 @@ public class SprintFacadeREST {
                 } else {
                     tx.begin();
                     ReleaseProject r = (ReleaseProject) q.getSingleResult();
-                    Sprint s = (Sprint) q.getSingleResult();
                     s.setIdrelease(r);
                     em.persist(s);
                     tx.commit();
