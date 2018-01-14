@@ -98,7 +98,7 @@ public class ReleaseFacadeREST {
     }
     
     @POST
-    @Path("update")
+    @Path("{id}/update")
     // http://localhost:8080/ProjetJEE/webresources/release/1/update?date=2018/02/10
     public String updateRelease(@PathParam("id") Integer idRelease, @QueryParam("date") String newDate){
         System.out.println("updateRelease()");
