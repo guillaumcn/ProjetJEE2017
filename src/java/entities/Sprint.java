@@ -56,6 +56,12 @@ public class Sprint implements Serializable {
     public Sprint(Integer idsprint) {
         this.idsprint = idsprint;
     }
+    
+    public Sprint(Integer idsprint, String descrition, ReleaseProject release) {
+        this.idsprint = idsprint;
+        this.description = descrition;
+        this.idrelease = release;
+    }
 
     public Integer getIdsprint() {
         return idsprint;
